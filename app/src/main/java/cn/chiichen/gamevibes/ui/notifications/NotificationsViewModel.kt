@@ -1,4 +1,4 @@
-package cn.chiichen.capcap.ui.notifications
+package cn.chiichen.gamevibes.ui.notifications
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

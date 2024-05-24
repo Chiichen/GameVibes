@@ -1,4 +1,4 @@
-package cn.chiichen.capcap
+package cn.chiichen.gamevibes
 
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -7,7 +7,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import cn.chiichen.capcap.databinding.ActivityMainBinding
+import cn.chiichen.gamevibes.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 

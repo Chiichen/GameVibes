@@ -1,4 +1,4 @@
-package cn.chiichen.capcap.ui.home
+package cn.chiichen.gamevibes.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "cn.chiichen.capcap"
+    namespace = "cn.chiichen.gamevibes"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "cn.chiichen.capcap"
+        applicationId = "cn.chiichen.gamevibes"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

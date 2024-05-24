@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "CapCap"
+rootProject.name = "GameVibes"
 include(":app")

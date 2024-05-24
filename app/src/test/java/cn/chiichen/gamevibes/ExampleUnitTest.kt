@@ -1,4 +1,4 @@
-package cn.chiichen.capcap
+package cn.chiichen.gamevibes
 
 import org.junit.Test
 
