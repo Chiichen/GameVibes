@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import cn.chiichen.gamevibes.ui.common.login.LoginWebview
 import cn.chiichen.gamevibes.ui.theme.GameVibesTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,10 +24,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column {
-                        Greeting(name = "World")
-                    }
-
+                    LoginWebview()
                 }
             }
         }
