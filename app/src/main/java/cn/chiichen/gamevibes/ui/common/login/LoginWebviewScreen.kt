@@ -49,13 +49,12 @@ fun LoginWebview(){
                     //缩放至屏幕的大小
                     loadWithOverviewMode = true
                     //缩放操作
-                    setSupportZoom(true)
-                    builtInZoomControls = true
-                    displayZoomControls = true
+                    setSupportZoom(false)
                     //是否支持通过JS打开新窗口
                     javaScriptCanOpenWindowsAutomatically = true
                     //不加载缓存内容
                     cacheMode = WebSettings.LOAD_NO_CACHE
+                    domStorageEnabled = true
                 }
             }, onBack = { webView ->
                 if (webView?.canGoBack() == true) {
