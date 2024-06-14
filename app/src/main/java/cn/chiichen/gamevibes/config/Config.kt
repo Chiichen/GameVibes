@@ -10,4 +10,5 @@ class GameVibesConfig {
         const val casdoor_redirectUri = "casdoor://callback"
         const val casdoor_appName = "GameVibes"
     }
+
 }
