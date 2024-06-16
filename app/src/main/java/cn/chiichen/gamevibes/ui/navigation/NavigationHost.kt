@@ -8,7 +8,9 @@ import androidx.navigation.compose.composable
 import cn.chiichen.gamevibes.ui.common.games.GamesScreen
 import cn.chiichen.gamevibes.ui.common.home.HomeScreen
 import cn.chiichen.gamevibes.ui.common.messages.MessagesScreen
-import cn.chiichen.gamevibes.ui.common.profile.ProfileScreen
+import cn.chiichen.gamevibes.ui.profile.ProfileScreen
+import cn.chiichen.gamevibes.ui.settings.SettingScreen
+import cn.chiichen.gamevibes.ui.settings.language.LanguageScreen
 
 
 @Composable
@@ -16,8 +18,20 @@ fun NavigationHost(navController: NavHostController, modifier: Modifier = Modifi
     NavHost(navController, startDestination = "home", modifier = modifier) {
         composable("home") { HomeScreen() }
         composable("games") { GamesScreen() }
-        composable("messages") { MessagesScreen()}
-        composable("profile"){ ProfileScreen() }
+        composable("messages") { MessagesScreen() }
+        composable("profile") { ProfileScreen(navController) }
+        composable("setting") { SettingScreen(navController) }
+        composable("setting/language") { LanguageScreen(navController) }
     }
 }
+
+//fun NavGraphBuilder.profileGraph(navController: NavController) {
+//    navigation(startDestination = "", route = "profilePage") {
+//        composable("profile") {  }
+//        composable("setting") { ... }
+//        composable("language") { ... }
+//    }
+//}
+
+
 
