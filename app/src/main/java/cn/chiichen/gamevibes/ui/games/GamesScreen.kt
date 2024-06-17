@@ -1,4 +1,4 @@
-package cn.chiichen.gamevibes.ui.common.games
+package cn.chiichen.gamevibes.ui.games
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
