@@ -5,9 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import cn.chiichen.gamevibes.ui.common.games.GamesScreen
-import cn.chiichen.gamevibes.ui.common.home.HomeScreen
-import cn.chiichen.gamevibes.ui.common.messages.MessagesScreen
+import cn.chiichen.gamevibes.ui.games.GamesScreen
+import cn.chiichen.gamevibes.ui.home.HomeScreen
+import cn.chiichen.gamevibes.ui.messages.MessagesScreen
 import cn.chiichen.gamevibes.ui.profile.ProfileScreen
 import cn.chiichen.gamevibes.ui.settings.SettingScreen
 import cn.chiichen.gamevibes.ui.settings.language.LanguageScreen

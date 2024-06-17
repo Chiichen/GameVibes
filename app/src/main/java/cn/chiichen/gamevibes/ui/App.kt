@@ -1,4 +1,4 @@
-package cn.chiichen.gamevibes.ui.common
+package cn.chiichen.gamevibes.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*

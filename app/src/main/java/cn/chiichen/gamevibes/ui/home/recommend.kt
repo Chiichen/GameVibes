@@ -1,4 +1,4 @@
-package cn.chiichen.gamevibes.ui.common.home
+package cn.chiichen.gamevibes.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

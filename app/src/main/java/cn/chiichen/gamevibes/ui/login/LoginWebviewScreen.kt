@@ -1,4 +1,4 @@
-package cn.chiichen.gamevibes.ui.common.login
+package cn.chiichen.gamevibes.ui.login
 
 import android.annotation.SuppressLint
 import android.util.Log

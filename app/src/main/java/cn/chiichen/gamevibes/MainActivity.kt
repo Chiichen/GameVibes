@@ -5,8 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import cn.chiichen.gamevibes.ui.common.MyApp
-//import cn.chiichen.gamevibes.ui.theme.GameVibesTheme
+import cn.chiichen.gamevibes.ui.MyApp
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
