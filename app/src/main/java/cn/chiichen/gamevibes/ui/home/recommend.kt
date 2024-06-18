@@ -33,13 +33,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cn.chiichen.gamevibes.R
 import cn.chiichen.gamevibes.model.entities.Article
+import cn.chiichen.gamevibes.utils.timeConvertor
 import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -104,7 +105,7 @@ private fun RowItem(article: Article) {
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = "时间·作者",/*TODO*/
+                    text = timeConvertor(article.postTime) + " • " + article.type,
                     fontSize = 12.sp,
                     color = Color.Gray
                 )
@@ -116,7 +117,7 @@ private fun RowItem(article: Article) {
                         modifier = Modifier.size(12.dp)
                     )
                     Text(
-                        text = "10",
+                        text = "${article.comments}",
                         fontSize = 12.sp,
                         color = Color.Gray
                     )
@@ -125,7 +126,7 @@ private fun RowItem(article: Article) {
         }
         Spacer(modifier = Modifier.width(5.dp))
         Image(
-            painter = painterResource(id = R.drawable.image1),
+            painter = rememberAsyncImagePainter(article.imageRes),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -202,4 +203,15 @@ fun Carousel() {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PrevR(){
+    val article:Article
+            = Article(1,"title",100,
+        "2024-06-02T14:15:22Z",10,
+        "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+        "测试类型")
+    RowItem(article = article)
 }
