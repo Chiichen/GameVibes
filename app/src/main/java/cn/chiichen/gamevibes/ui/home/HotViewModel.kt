@@ -1,6 +1,5 @@
 package cn.chiichen.gamevibes.ui.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cn.chiichen.gamevibes.model.entities.Article
