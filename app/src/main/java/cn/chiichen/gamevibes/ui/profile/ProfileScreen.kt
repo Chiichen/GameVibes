@@ -22,10 +22,12 @@ import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +40,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cn.chiichen.gamevibes.R
+import cn.chiichen.gamevibes.ui.profile.favorite.FavoriteScreen
+import cn.chiichen.gamevibes.ui.profile.likes.LikeScreen
+import cn.chiichen.gamevibes.ui.profile.post.PostScreen
+import cn.chiichen.gamevibes.ui.profile.review.ReviewScreen
 
 @Composable
 fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = viewModel()) {
@@ -58,16 +64,13 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = vi
             )
             IconButton(
                 onClick = {
-                    navController.navigate("setting") {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
+                    navController.navigate("setting")
                 }, modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(16.dp)
             ) {
                 Icon(
-                    Icons.Rounded.Settings,//TODO replace it with actual icon
+                    Icons.Rounded.Settings,
                     contentDescription = null, tint = Color.White
                 )
             }
@@ -83,7 +86,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = vi
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    Icons.Rounded.AccountCircle,
+                    painter = painterResource(id = R.drawable.ic_avatar),
                     contentDescription = null,
                     modifier = Modifier
                         .size(64.dp)
@@ -114,43 +117,33 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = vi
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(text = viewModel.likes.toString(), fontWeight = FontWeight.Bold)
-                    Text(text = "获得与收藏", color = Color.Gray)
+                    Text(text = "获赞与收藏", color = Color.Gray)
                 }
             }
         }
-
+        var selectedTabIndex by remember { mutableStateOf(0) }
         // Tabs
-        TabRow(selectedTabIndex = 0) {
-            Tab(selected = true, onClick = { /*TODO*/ }) {
+        TabRow(selectedTabIndex = selectedTabIndex) {
+            Tab(selected = selectedTabIndex == 0, onClick = { selectedTabIndex = 0 }) {
                 Text(text = "帖子", modifier = Modifier.padding(16.dp))
             }
-            Tab(selected = false, onClick = { /*TODO*/ }) {
+            Tab(selected = selectedTabIndex == 1, onClick = { selectedTabIndex = 1 }) {
                 Text(text = "点评", modifier = Modifier.padding(16.dp))
             }
-            Tab(selected = false, onClick = { /*TODO*/ }) {
+            Tab(selected = selectedTabIndex == 2, onClick = { selectedTabIndex = 2 }) {
                 Text(text = "收藏", modifier = Modifier.padding(16.dp))
             }
-            Tab(selected = false, onClick = { /*TODO*/ }) {
+            Tab(selected = selectedTabIndex == 3, onClick = { selectedTabIndex = 3 }) {
                 Text(text = "点赞", modifier = Modifier.padding(16.dp))
             }
         }
 
         // Content
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(
-                    Icons.Rounded.Add,//TODO replace it with actual image
-                    contentDescription = null, modifier = Modifier.size(128.dp)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "什么也没有", color = Color.Gray)
-            }
+        when (selectedTabIndex) {
+            0 -> PostScreen()
+            1 -> ReviewScreen()
+            2 -> FavoriteScreen()
+            3 -> LikeScreen()
         }
     }
 }
