@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cn.chiichen.gamevibes.R
 import cn.chiichen.gamevibes.model.entities.Article
+import cn.chiichen.gamevibes.utils.timeConvertor
+import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun Hot(viewModel: HotViewModel = viewModel()) {
@@ -107,7 +109,7 @@ private fun RowItem(article: Article) {
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = "${1000 - article.id} 万阅读·作者",/*TODO*/
+                    text = "${article.pv}阅读" + " • " + article.type,
                     fontSize = 12.sp,
                     color = Color.Gray
                 )
@@ -119,7 +121,7 @@ private fun RowItem(article: Article) {
                         modifier = Modifier.size(12.dp)
                     )
                     Text(
-                        text = "10",
+                        text = "${article.comments}",
                         fontSize = 12.sp,
                         color = Color.Gray
                     )
@@ -128,7 +130,7 @@ private fun RowItem(article: Article) {
         }
         Spacer(modifier = Modifier.width(5.dp))
         Image(
-            painter = painterResource(id = R.drawable.image1),
+            painter = rememberAsyncImagePainter(article.imageRes),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -142,5 +144,11 @@ private fun RowItem(article: Article) {
 @Preview(showBackground = true)
 @Composable
 fun Prev(){
-    Hot()
+    val article:Article
+            = Article(1,"title",100,
+        "2024-06-02T14:15:22Z",10,
+        "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+        "测试类型")
+    RowItem(article = article)
+//    Hot()
 }
