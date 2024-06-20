@@ -1,4 +1,4 @@
-package cn.chiichen.gamevibes.ui.profile.likes
+package cn.chiichen.gamevibes.ui.profile.like
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

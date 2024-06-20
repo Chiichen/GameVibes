@@ -41,7 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cn.chiichen.gamevibes.R
 import cn.chiichen.gamevibes.ui.profile.favorite.FavoriteScreen
-import cn.chiichen.gamevibes.ui.profile.likes.LikeScreen
+import cn.chiichen.gamevibes.ui.profile.like.LikeScreen
 import cn.chiichen.gamevibes.ui.profile.post.PostScreen
 import cn.chiichen.gamevibes.ui.profile.review.ReviewScreen
 
