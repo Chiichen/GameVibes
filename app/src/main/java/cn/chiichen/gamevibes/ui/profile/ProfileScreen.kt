@@ -65,7 +65,7 @@ fun LoggedOutProfileScreen(navController: NavController) {
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background), // TODO: Replace with actual image
+            painter = painterResource(id = R.drawable.logo),
             contentDescription = null,
             modifier = Modifier.size(128.dp)
         )
