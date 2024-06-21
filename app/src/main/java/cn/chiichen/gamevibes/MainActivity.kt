@@ -7,11 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import cn.chiichen.gamevibes.ui.MyApp
+import com.tencent.mmkv.MMKV
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MMKV.initialize(this);
         setContent {
             MyApp(this)
         }
@@ -19,9 +21,8 @@ class MainActivity : ComponentActivity() {
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-        MyApp(LocalContext.current)
+    MyApp(LocalContext.current)
 }

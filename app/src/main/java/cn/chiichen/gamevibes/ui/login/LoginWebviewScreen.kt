@@ -11,7 +11,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import cn.chiichen.gamevibes.R
+import androidx.navigation.NavController
 import cn.chiichen.gamevibes.config.GameVibesConfig
 import cn.chiichen.gamevibes.ui.common.webview.CustomWebView
 import org.casdoor.Casdoor
@@ -20,7 +20,7 @@ import org.casdoor.CasdoorConfig
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun LoginWebview(){
+fun LoginWebview(navController: NavController) {
     val casdoorConfig = CasdoorConfig(
         endpoint = GameVibesConfig.casdoor_endpoint,
         clientID = GameVibesConfig.casdoor_clientID,
@@ -28,10 +28,10 @@ fun LoginWebview(){
         redirectUri = GameVibesConfig.casdoor_redirectUri,
         appName = GameVibesConfig.casdoor_appName,
     )
-    Log.i("Login", String.format("LoginWebview: endpoint %s",casdoorConfig.endpoint))
+    Log.i("Login", String.format("LoginWebview: endpoint %s", casdoorConfig.endpoint))
     val casdoor = Casdoor(casdoorConfig)
     val loginUrl = casdoor.getSignInUrl(scope = "profile")
-    Log.i("Login", String.format("LoginWebview: loginUrl %s",loginUrl))
+    Log.i("Login", String.format("LoginWebview: loginUrl %s", loginUrl))
     var rememberWebViewProgress: Int by remember { mutableIntStateOf(-1) }
     Box {
         CustomWebView(
@@ -59,9 +59,11 @@ fun LoginWebview(){
             }, onBack = { webView ->
                 if (webView?.canGoBack() == true) {
                     webView.goBack()
+                } else {
+                    navController.popBackStack();
                 }
-            }, onReceivedError = {error ->
-                Log.e("Login", String.format("LoginWebview error %s",error) )
+            }, onReceivedError = { error ->
+                Log.e("Login", String.format("LoginWebview error %s", error))
             }
         )
     }
