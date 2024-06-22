@@ -1,4 +1,4 @@
-package cn.chiichen.gamevibes.ui.home
+package cn.chiichen.gamevibes.ui.home.recommend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +12,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class HotViewModel :ViewModel() {
+class RecommendViewModel: ViewModel() {
     private val _articles = MutableStateFlow<List<Article>>(emptyList())
     val articles: StateFlow<List<Article>> = _articles
 
@@ -24,7 +24,7 @@ class HotViewModel :ViewModel() {
 
     fun loadMore() {
         viewModelScope.launch {
-            val call = RetrofitClient.articleApiService.getHotList(currentPage, 10)
+            val call = RetrofitClient.articleApiService.getRecommendList(currentPage, 10)
             call.enqueue(object : Callback<ArticleResponse> {
                 override fun onResponse(call: Call<ArticleResponse>, response: Response<ArticleResponse>) {
                     if (response.isSuccessful) {
@@ -42,5 +42,4 @@ class HotViewModel :ViewModel() {
             })
         }
     }
-
 }

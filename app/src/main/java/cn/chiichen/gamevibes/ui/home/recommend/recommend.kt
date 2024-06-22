@@ -1,6 +1,7 @@
-package cn.chiichen.gamevibes.ui.home
+package cn.chiichen.gamevibes.ui.home.recommend
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,9 +42,11 @@ import cn.chiichen.gamevibes.R
 import cn.chiichen.gamevibes.model.entities.Article
 import cn.chiichen.gamevibes.utils.timeConvertor
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 
 @Composable
-fun Hot(viewModel: HotViewModel = viewModel()) {
+fun Recommend(viewModel: RecommendViewModel = viewModel()){
     val articles by viewModel.articles.collectAsState()
     val listState = rememberLazyListState()
 
@@ -52,6 +54,9 @@ fun Hot(viewModel: HotViewModel = viewModel()) {
         modifier = Modifier.fillMaxSize(),
         state = listState
     ) {
+        item {
+            Carousel()
+        }
         items(articles) { article ->
             RowItem(article = article)
         }
@@ -81,15 +86,6 @@ private fun RowItem(article: Article) {
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.Center
     ) {
-        Box(
-            modifier = Modifier.width(20.dp),
-        ) {
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = "${article.id + 1}",
-                fontSize = 20.sp
-            )
-        }
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -109,7 +105,7 @@ private fun RowItem(article: Article) {
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = "${article.pv}阅读" + " • " + article.type,
+                    text = timeConvertor(article.postTime) + " • " + article.type,
                     fontSize = 12.sp,
                     color = Color.Gray
                 )
@@ -141,14 +137,81 @@ private fun RowItem(article: Article) {
     }
 }
 
+@Composable
+fun Carousel() {
+    val pagerState = rememberPagerState()
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+    ) {
+        HorizontalPager(
+            count = 5,
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxSize()
+        ) { page ->
+            Box(modifier = Modifier.fillMaxSize()) {
+                Image(
+                    painter = rememberAsyncImagePainter(R.drawable.image1),//TODO 修改首页轮播图来源
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+
+                // Title overlay
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .background(Color.Black.copy(alpha = 0.5f))
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = "title$page",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+            }
+        }
+
+        // Custom indicator
+        Row(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+                .background(Color.Black.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp))
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            repeat(5) { index ->
+                val isSelected = index == pagerState.currentPage
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .height(4.dp)
+                        .width(if (isSelected) 16.dp else 8.dp)
+                        .background(
+                            if (isSelected) Color.White else Color.Gray,
+                            shape = RoundedCornerShape(2.dp)
+                        )
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
-fun Prev(){
+fun PrevR(){
     val article:Article
             = Article(1,"title",100,
         "2024-06-02T14:15:22Z",10,
         "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
         "测试类型")
     RowItem(article = article)
-//    Hot()
 }
