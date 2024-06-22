@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Tab
@@ -41,12 +42,46 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cn.chiichen.gamevibes.R
 import cn.chiichen.gamevibes.ui.profile.favorite.FavoriteScreen
-import cn.chiichen.gamevibes.ui.profile.likes.LikeScreen
+import cn.chiichen.gamevibes.ui.profile.like.LikeScreen
 import cn.chiichen.gamevibes.ui.profile.post.PostScreen
 import cn.chiichen.gamevibes.ui.profile.review.ReviewScreen
 
 @Composable
 fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = viewModel()) {
+    if (viewModel.isLoggedIn) {
+        LoggedInProfileScreen(navController, viewModel)
+    } else {
+        LoggedOutProfileScreen(navController)
+    }
+}
+
+@Composable
+fun LoggedOutProfileScreen(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF5F5F5)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = null,
+            modifier = Modifier.size(128.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "暂未登录", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "登录后可使用更多功能", color = Color.Gray)
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { navController.navigate("login") }) {
+            Text(text = "登录")
+        }
+    }
+}
+
+@Composable
+fun LoggedInProfileScreen(navController: NavController, viewModel: ProfileViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -55,7 +90,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = vi
         // Header Image with Settings Icon
         Box {
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_background), //TODO replace it with actual image
+                painter = painterResource(id = R.drawable.ic_launcher_background), // TODO: Replace with actual image
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

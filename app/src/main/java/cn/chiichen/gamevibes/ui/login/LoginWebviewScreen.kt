@@ -1,6 +1,8 @@
 package cn.chiichen.gamevibes.ui.login
 
 import android.annotation.SuppressLint
+import android.net.Uri
+import android.text.TextUtils
 import android.util.Log
 import android.webkit.WebSettings
 import androidx.compose.foundation.layout.Box
@@ -11,16 +13,17 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import cn.chiichen.gamevibes.R
+import androidx.navigation.NavController
 import cn.chiichen.gamevibes.config.GameVibesConfig
 import cn.chiichen.gamevibes.ui.common.webview.CustomWebView
+import com.tencent.mmkv.MMKV
 import org.casdoor.Casdoor
 import org.casdoor.CasdoorConfig
 
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun LoginWebview(){
+fun LoginWebview(navController: NavController) {
     val casdoorConfig = CasdoorConfig(
         endpoint = GameVibesConfig.casdoor_endpoint,
         clientID = GameVibesConfig.casdoor_clientID,
@@ -28,10 +31,10 @@ fun LoginWebview(){
         redirectUri = GameVibesConfig.casdoor_redirectUri,
         appName = GameVibesConfig.casdoor_appName,
     )
-    Log.i("Login", String.format("LoginWebview: endpoint %s",casdoorConfig.endpoint))
+    Log.i("Login", String.format("LoginWebview: endpoint %s", casdoorConfig.endpoint))
     val casdoor = Casdoor(casdoorConfig)
     val loginUrl = casdoor.getSignInUrl(scope = "profile")
-    Log.i("Login", String.format("LoginWebview: loginUrl %s",loginUrl))
+    Log.i("Login", String.format("LoginWebview: loginUrl %s", loginUrl))
     var rememberWebViewProgress: Int by remember { mutableIntStateOf(-1) }
     Box {
         CustomWebView(
@@ -59,9 +62,24 @@ fun LoginWebview(){
             }, onBack = { webView ->
                 if (webView?.canGoBack() == true) {
                     webView.goBack()
+                } else {
+                    navController.popBackStack()
                 }
-            }, onReceivedError = {error ->
-                Log.e("Login", String.format("LoginWebview error %s",error) )
+            }, onReceivedError = { error ->
+                Log.e("Login", String.format("LoginWebview error %s", error))
+            }, overrideUrlLoading = { _, request ->
+                val url = request?.url.toString()
+                val uri = Uri.parse(url)
+                if (uri.scheme.toString() == "casdoor") {
+                    val code: String? = uri.getQueryParameter("code")
+                    if (!TextUtils.isEmpty(code)) {
+                        val mmkv = MMKV.defaultMMKV()
+                        Log.i("Login", String.format("inserting login token %s", code))
+                        mmkv.putString("login_token", code)
+                        return@CustomWebView true
+                    }
+                }
+                return@CustomWebView false
             }
         )
     }
