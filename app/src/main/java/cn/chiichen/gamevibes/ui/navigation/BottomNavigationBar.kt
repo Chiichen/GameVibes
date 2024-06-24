@@ -72,7 +72,6 @@ fun BottomNavigationBar(navController: NavController) {
            },
             selected = currentRoute == "messages",
             onClick = {
-                //TODO
                 navController.navigate("post") {
                     popUpTo(navController.graph.startDestinationId)
                     launchSingleTop = true

@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -42,8 +43,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -54,15 +53,33 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import cn.chiichen.gamevibes.R
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
-import coil.size.OriginalSize
-import coil.size.Scale
 import coil.size.Size
-import coil.transform.CircleCropTransformation
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import cn.chiichen.gamevibes.ui.post.relatedGame.GameRelatedScreen
+import cn.chiichen.gamevibes.ui.splash.FirstPage
+import cn.chiichen.gamevibes.ui.splash.SecondPage
+import cn.chiichen.gamevibes.ui.splash.ThirdPage
 
 @Composable
 fun PostScreen(navController: NavHostController) {
+    val viewModel: PostViewModel = viewModel()
+    val innerNavController = rememberNavController()
+    NavHost(navController = innerNavController, startDestination = "post") {
+        composable("post") { Post(navController = innerNavController, outerNavController = navController, viewModel) }
+        composable("related") { GameRelatedScreen(navController = innerNavController,viewModel)}
+    }
+}
+
+@Composable
+fun Post(navController: NavController, outerNavController:NavController, viewModel: PostViewModel){
+    var title by remember {mutableStateOf(viewModel.title.value)}
+    var content by remember { mutableStateOf(viewModel.content.value) }
+    var relatedGame by remember { mutableStateOf(viewModel.relatedGame.value) }
+
     Column(
         modifier = Modifier.background(colorResource(id = R.color.grey))
     ) {
@@ -74,7 +91,9 @@ fun PostScreen(navController: NavHostController) {
                 .fillMaxWidth()
                 .padding(10.dp)
         ) {
-            IconButton(onClick = { /*TODO*/}) {
+            IconButton(onClick = {
+                outerNavController.popBackStack()
+            }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.ArrowBack,
                     contentDescription = "",
@@ -111,13 +130,32 @@ fun PostScreen(navController: NavHostController) {
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
 
-                ImageUpload()
+                ImageUpload(viewModel)
 
-                GameRelated()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    val text = relatedGame
+                    Button(
+                        onClick = {
+                            navController.navigate("related")
+                        },
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.grey))
+                    ) {
+                        Text(text = text)
+                    }
+                }
 
                 TextField(
-                    value = "填写标题",
-                    onValueChange = {},
+                    value = title,
+                    onValueChange = {
+                        title = it
+                        viewModel.updateTitle(it)
+                    },
+                    placeholder = { Text(text = "填写标题")},
                     modifier = Modifier
                         .fillMaxWidth(),
                     colors = TextFieldDefaults.textFieldColors(
@@ -128,8 +166,12 @@ fun PostScreen(navController: NavHostController) {
                 )
 
                 TextField(
-                    value = "评价内容...",
-                    onValueChange = {},
+                    value = content,
+                    onValueChange = {
+                        content = it
+                        viewModel.updateContent(it)
+                    },
+                    placeholder = { Text(text =  "评价内容...")},
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
@@ -141,15 +183,21 @@ fun PostScreen(navController: NavHostController) {
                 )
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        viewModel.post()
+                        outerNavController.popBackStack()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp)
                         .padding(horizontal = 30.dp),
-                    shape = RoundedCornerShape(50)
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.buttonColors(Color(0xfffacd91))
                 ) {
-                    Text(text = "发布")
+                    Text(text = "发布", color = Color.White)
                 }
+
+                Spacer(modifier = Modifier.padding(10.dp))
             }
         }
     }
@@ -157,7 +205,7 @@ fun PostScreen(navController: NavHostController) {
 
 
 @Composable
-fun ImageUpload(){
+fun ImageUpload(viewModel: PostViewModel){
     var selectedImageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var uriToDelete by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
@@ -165,6 +213,7 @@ fun ImageUpload(){
         contract = ActivityResultContracts.GetMultipleContents(),
         onResult = { uris: List<Uri> ->
             selectedImageUris = selectedImageUris + uris
+            viewModel.updateImages(selectedImageUris)
         }
     )
 
@@ -248,18 +297,6 @@ fun ImageUpload(){
     }
 }
 
-@Composable
-fun GameRelated() {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
-        horizontalArrangement = Arrangement.End
-    ) {
-        val text = remember {"关联游戏"}
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = text)
-        }
-    }
-}
 @Preview(showBackground = true)
 @Composable
 private fun Prev (){

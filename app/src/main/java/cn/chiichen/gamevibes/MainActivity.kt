@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         MMKV.initialize(this);
         setContent {
-            MyApp(this)
+            MyApp()
         }
     }
 }
@@ -24,5 +24,5 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    MyApp(LocalContext.current)
+    MyApp()
 }

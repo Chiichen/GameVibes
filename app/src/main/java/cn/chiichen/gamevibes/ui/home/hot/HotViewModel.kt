@@ -24,6 +24,30 @@ class HotViewModel :ViewModel() {
 
     fun loadMore() {
         viewModelScope.launch {
+            // 测试数据 todo delete
+            _articles.value += listOf(
+                Article(1,"title",100,
+                    "2024-06-02T14:15:22Z",10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"),
+                Article(2,"title",100,
+                    "2024-06-02T14:15:22Z",10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"),
+                Article(3,"title",100,
+                    "2024-06-02T14:15:22Z",10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"),
+                Article(4,"title",100,
+                    "2024-06-02T14:15:22Z",10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"),
+                Article(5,"title",100,
+                    "2024-06-02T14:15:22Z",10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型")
+            )
+
             val call = RetrofitClient.articleApiService.getHotList(currentPage, 10)
             call.enqueue(object : Callback<ArticleResponse> {
                 override fun onResponse(call: Call<ArticleResponse>, response: Response<ArticleResponse>) {

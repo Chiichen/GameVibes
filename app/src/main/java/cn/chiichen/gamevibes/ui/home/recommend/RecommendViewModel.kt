@@ -1,5 +1,8 @@
 package cn.chiichen.gamevibes.ui.home.recommend
 
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cn.chiichen.gamevibes.model.entities.Article
@@ -13,17 +16,112 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class RecommendViewModel: ViewModel() {
+
     private val _articles = MutableStateFlow<List<Article>>(emptyList())
     val articles: StateFlow<List<Article>> = _articles
+
+    private val _news = MutableStateFlow<List<Article>>(emptyList())
+    val news = _news
 
     private var currentPage = 0
 
     init {
+        getNews()
         loadMore()
+    }
+
+    private fun getNews(){
+        // 测试数据 todo delete
+        _news.value = listOf(
+            Article(1,"title",100,
+                "2024-06-02T14:15:22Z",10,
+                "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                "测试类型"),
+            Article(2,"title",100,
+                "2024-06-02T14:15:22Z",10,
+                "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                "测试类型"),
+            Article(3,"title",100,
+                "2024-06-02T14:15:22Z",10,
+                "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                "测试类型"),
+            Article(4,"title",100,
+                "2024-06-02T14:15:22Z",10,
+                "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                "测试类型"),
+            Article(5,"title",100,
+                "2024-06-02T14:15:22Z",10,
+                "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                "测试类型"),
+
+        )
     }
 
     fun loadMore() {
         viewModelScope.launch {
+            // 测试数据 todo delete
+            _articles.value += listOf(
+                Article(
+                    1, "title", 100,
+                    "2024-06-02T14:15:22Z", 10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"
+                ),
+                Article(
+                    2, "title", 100,
+                    "2024-06-02T14:15:22Z", 10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"
+                ),
+                Article(
+                    3, "title", 100,
+                    "2024-06-02T14:15:22Z", 10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"
+                ),
+                Article(
+                    4, "title", 100,
+                    "2024-06-02T14:15:22Z", 10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"
+                ),
+                Article(
+                    5, "title", 100,
+                    "2024-06-02T14:15:22Z", 10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"
+                ),
+                Article(
+                    1, "title", 100,
+                    "2024-06-02T14:15:22Z", 10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"
+                ),
+                Article(
+                    2, "title", 100,
+                    "2024-06-02T14:15:22Z", 10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"
+                ),
+                Article(
+                    3, "title", 100,
+                    "2024-06-02T14:15:22Z", 10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"
+                ),
+                Article(
+                    4, "title", 100,
+                    "2024-06-02T14:15:22Z", 10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"
+                ),
+                Article(
+                    5, "title", 100,
+                    "2024-06-02T14:15:22Z", 10,
+                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    "测试类型"
+                )
+            )
             val call = RetrofitClient.articleApiService.getRecommendList(currentPage, 10)
             call.enqueue(object : Callback<ArticleResponse> {
                 override fun onResponse(call: Call<ArticleResponse>, response: Response<ArticleResponse>) {
@@ -35,9 +133,8 @@ class RecommendViewModel: ViewModel() {
                         }
                     }
                 }
-
                 override fun onFailure(call: Call<ArticleResponse>, t: Throwable) {
-
+                    //todo
                 }
             })
         }

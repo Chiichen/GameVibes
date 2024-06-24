@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -38,16 +40,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import cn.chiichen.gamevibes.R
 import cn.chiichen.gamevibes.model.entities.Article
 import cn.chiichen.gamevibes.utils.timeConvertor
 import coil.compose.rememberAsyncImagePainter
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 
 @Composable
 fun Recommend(viewModel: RecommendViewModel = viewModel()){
     val articles by viewModel.articles.collectAsState()
+    val news by viewModel.news.collectAsState()
     val listState = rememberLazyListState()
 
     LazyColumn(
@@ -55,7 +55,7 @@ fun Recommend(viewModel: RecommendViewModel = viewModel()){
         state = listState
     ) {
         item {
-            Carousel()
+            Carousel(news = news)
         }
         items(articles) { article ->
             RowItem(article = article)
@@ -138,23 +138,24 @@ private fun RowItem(article: Article) {
 }
 
 @Composable
-fun Carousel() {
-    val pagerState = rememberPagerState()
-
+fun Carousel(news: List<Article>) {
+    val pagerState = rememberPagerState (
+        initialPage = 0,
+        pageCount = { news.size }
+    )
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
     ) {
         HorizontalPager(
-            count = 5,
             state = pagerState,
             modifier = Modifier
                 .fillMaxSize()
         ) { page ->
             Box(modifier = Modifier.fillMaxSize()) {
                 Image(
-                    painter = rememberAsyncImagePainter(R.drawable.image1),//TODO 修改首页轮播图来源
+                    painter = rememberAsyncImagePainter(news[page].imageRes),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -169,7 +170,7 @@ fun Carousel() {
                         .padding(8.dp)
                 ) {
                     Text(
-                        text = "title$page",
+                        text = news[page].title,
                         color = Color.White,
                         fontSize = 16.sp,
                         modifier = Modifier.padding(8.dp)
@@ -208,8 +209,7 @@ fun Carousel() {
 @Preview(showBackground = true)
 @Composable
 fun PrevR(){
-    val article:Article
-            = Article(1,"title",100,
+    val article = Article(1,"title",100,
         "2024-06-02T14:15:22Z",10,
         "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
         "测试类型")

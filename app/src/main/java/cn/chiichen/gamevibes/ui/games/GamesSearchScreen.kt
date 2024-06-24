@@ -7,11 +7,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -22,25 +25,43 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import cn.chiichen.gamevibes.R
+import coil.compose.rememberAsyncImagePainter
+
 
 @Composable
-fun GamesSearchScreen(navController: NavController){
+fun GamesSearchScreen(navController: NavController,viewModel: GamesViewModel){
+    val relatedGames by viewModel.relatedGame.collectAsState()
+    var searchText by remember { mutableStateOf(viewModel.searchText.value) }
+    val listState = LazyListState()
+
+    LaunchedEffect(Unit) {
+        viewModel.getRelatedGames()
+    }
     Column {
         TopAppBar(title = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(
+                    onClick = {
+                        navController.popBackStack()
+                    }
+                ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = "",
@@ -70,20 +91,50 @@ fun GamesSearchScreen(navController: NavController){
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextField(value = "", onValueChange = {}, modifier = Modifier.height(30.dp))
-                Icon(imageVector = Icons.Default.Search, contentDescription = "")
+                TextField(
+                    value = searchText,
+                    onValueChange = {
+                        searchText = it
+                        viewModel.updateSearchText(it)
+                    },
+                    modifier = Modifier.height(30.dp)
+                )
+                IconButton(
+                    onClick = {
+                        viewModel.updateSearchText(searchText)
+                        viewModel.getRelatedGames()
+                    }
+                ){
+                    Icon(imageVector = Icons.Default.Search, contentDescription = "")
+                }
             }
         }
-        LazyColumn {
-            items(10) {item ->
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(relatedGames){item ->
                 RowItem(item)
+            }
+        }
+
+        val shouldLoadMore = remember {
+            derivedStateOf {
+                val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                lastVisibleItemIndex != null && lastVisibleItemIndex >= relatedGames.size - 5
+            }
+        }
+
+        LaunchedEffect(shouldLoadMore.value) {
+            if (shouldLoadMore.value) {
+                viewModel.getRelatedGames()
             }
         }
     }
 }
 
 @Composable
-private fun RowItem(item: Int){
+private fun RowItem(game: Game){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -92,25 +143,17 @@ private fun RowItem(item: Int){
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Image(painter = painterResource(id = R.drawable.image1), contentDescription = "")
+        Image(painter = rememberAsyncImagePainter(game.image), contentDescription = "")
         Spacer(modifier = Modifier.width(10.dp))
         Column {
-            Text(text = "title$item")
+            Text(text = game.title)
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(imageVector = Icons.Default.Star, contentDescription = "")
-                Text(text = "8.7")
+                Text(text = "${game.rating}")
             }
         }
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-private fun Prev (){
-    val navController = rememberNavController()
-    GamesSearchScreen(navController = navController)
 }

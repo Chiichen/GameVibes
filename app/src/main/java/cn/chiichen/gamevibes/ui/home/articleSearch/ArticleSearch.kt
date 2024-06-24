@@ -1,8 +1,9 @@
 package cn.chiichen.gamevibes.ui.home.articleSearch
 
-import android.view.View
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,58 +12,64 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import cn.chiichen.gamevibes.ui.home.recommend.RecommendViewModel
+import cn.chiichen.gamevibes.R
 
 @Composable
-fun ArticleSearchScreen(navController: NavHostController,viewModel: ArticleSearchViewModel = viewModel()) {
-    var searchText by viewModel.searchText
-    var isExpanded by remember { mutableStateOf(false) }
-    val searchHistory = listOf(
-        "短文本",
-        "较长的搜索记录文本1",
-        "搜索记录",
-        "非常长的搜索记录文本2超出长度",
-        "搜索记录5",
-        "搜索记录6",
-        "搜索记录7",
-        "搜索记录8",
-        "搜索记录9",
-        "搜索记录10",
-        "较长的搜索记录文本1",
-        "搜索记录",
-        "非常长的搜索记录文本2超出长度",
-        "搜索记录5"
-    )
+fun ArticleSearchScreen(navController: NavHostController,viewModel: ArticleSearchViewModel) {
+
+    var searchText by remember {mutableStateOf(viewModel.searchText.value)}
+    var maxRows by remember { mutableIntStateOf(2) }
+    var isOverFlow by remember { mutableStateOf(false) }
+    val searchHistory by viewModel.searchHistory.collectAsState()
+    val searchFindings by viewModel.searchFindings.collectAsState()
+    val hotTopics by viewModel.hotTopics.collectAsState()
+
+
+    LaunchedEffect(Unit) {
+        viewModel.getSearchFinding()
+        viewModel.getHotTopics()
+    }
+
     Column(
         modifier = Modifier
             .background(Color.White)
+            .padding(10.dp)
             .fillMaxSize()
     ) {
         Row {
@@ -76,15 +83,18 @@ fun ArticleSearchScreen(navController: NavHostController,viewModel: ArticleSearc
             }
             TextField(
                 value = searchText,
-                onValueChange = { searchText = it },
-                placeholder = { Text(text = "搜索") },
+                onValueChange = {
+                    searchText = it
+                    viewModel.updateSearchText(it)
+                },
+                placeholder = { Text(text = "输入搜索内容") },
                 modifier = Modifier
                     .fillMaxWidth(),
                 leadingIcon = {
                     IconButton(
                         onClick = {
                             if (searchText.isNotEmpty()) {
-                                //TODO 将searchText传给搜索页
+                                viewModel.addSearchHistory(searchText)
                                 navController.navigate("articleSearchResult")
                             }
                         },
@@ -102,6 +112,7 @@ fun ArticleSearchScreen(navController: NavHostController,viewModel: ArticleSearc
                 keyboardActions = KeyboardActions(
                     onSearch = {
                         if (searchText.isNotEmpty()) {
+                            viewModel.addSearchHistory(searchText)
                             navController.navigate("articleSearchResult")
                         }
                     }
@@ -110,89 +121,189 @@ fun ArticleSearchScreen(navController: NavHostController,viewModel: ArticleSearc
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Text(text = "搜索历史", fontWeight = FontWeight.Bold)
+        LazyColumn {
+            item {
+                Text(text = "搜索历史", fontWeight = FontWeight.Bold)
+            }
 
-        val maxLines = if (isExpanded) 5 else 2
-        val maxItems = maxLines * 4  // Assuming 4 items per row
-
-        SearchHistorySection(searchHistory, maxItems, isExpanded) {
-            isExpanded = !isExpanded
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(text = "搜索发现",fontWeight = FontWeight.Bold)
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.weight(1f)) {
-                for (i in 1..5) {
-                    Text(text = "搜索发现 $i")
+            item {
+                LimitedFlowRow(
+                    maxRows = maxRows,
+                    onRowsExceededMax = {
+                        isOverFlow = true
+                    }
+                ){
+                    searchHistory.asReversed().forEach { item ->
+                        Button(
+                            onClick = {
+                                viewModel.updateSearchText(item)
+                                viewModel.addSearchHistory(item)
+                                navController.navigate("articleSearchResult")
+                            },
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xfff7f8f9))
+                        ) {
+                            Text(text = item)
+                        }
+                    }
                 }
             }
-            Column(modifier = Modifier.weight(1f)) {
-                for (i in 6..10) {
-                    Text(text = "搜索发现 $i")
+
+            item{
+                if(isOverFlow){
+                    IconButton(
+                        onClick = {
+                            maxRows = if(maxRows == 5) 2 else 5
+                        }
+                    ) {
+                        Icon(
+                            imageVector =
+                                if(maxRows == 2) Icons.Default.KeyboardArrowDown
+                                else Icons.Default.KeyboardArrowUp,
+                            contentDescription = ""
+                        )
+                    }
+                }
+            }
+
+            item {Spacer(modifier = Modifier.height(20.dp)) }
+            item {
+                Text(text = "搜索发现", fontWeight = FontWeight.Bold)
+                // 使用手动网格布局替代 LazyVerticalGrid
+                val rowCount = (searchFindings.size + 1) / 2 // 计算行数，2列布局
+                for (rowIndex in 0 until rowCount) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        for (colIndex in 0 until 2) {
+                            val itemIndex = rowIndex * 2 + colIndex
+                            if (itemIndex < searchFindings.size) {
+                                Text(
+                                    text = searchFindings[itemIndex],
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(8.dp)
+                                        .clickable(
+                                            onClick = {
+                                                viewModel.updateSearchText(searchFindings[itemIndex])
+                                                viewModel.addSearchHistory(searchFindings[itemIndex])
+                                                navController.navigate("articleSearchResult")
+                                            }
+                                        )
+                                )
+                            } else {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+
+            item {
+                val gradientBrush = Brush.verticalGradient(
+                    colors = listOf(colorResource(id = R.color.grey), Color.White),
+                    startY = 0f,
+                    endY = 300f
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp))
+                        .background(brush = gradientBrush)
+                        .padding(30.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Text(text = "热门讨论", fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(20.dp))
+                        hotTopics.forEachIndexed { index, topic ->
+                            Text(
+                                text = "${index + 1}  $topic",
+                                modifier = Modifier
+                                    .padding(vertical = 10.dp)
+                                    .clickable(onClick = {
+                                        viewModel.updateSearchText(topic)
+                                        viewModel.addSearchHistory(topic)
+                                        navController.navigate("articleSearchResult")
+                                    })
+                            )
+                        }
+                    }
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(text = "热门讨论")
     }
 }
 
 
 @Composable
-fun SearchHistorySection(
-    searchHistory: List<String>,
-    maxItems: Int,
-    isExpanded: Boolean,
-    onExpandToggle: () -> Unit
+fun LimitedFlowRow(
+    modifier: Modifier = Modifier,
+    maxRows: Int = 2,
+    horizontalSpacing: Dp = 8.dp,
+    verticalSpacing: Dp = 8.dp,
+    onRowsExceededMax: () -> Unit,
+    content: @Composable () -> Unit
 ) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp - 20.dp
-    val buttonPadding = 8.dp
-    var currentRowWidth = 0.dp
+    Layout(
+        content = content,
+        modifier = modifier
+    ) { measurables, constraints ->
+        val placeables = measurables.map { measurable ->
+            measurable.measure(constraints)
+        }
 
-    Column {
-        var currentRowItems = mutableListOf<String>()
-        val rows = mutableListOf<List<String>>()
+        val rows = mutableListOf<List<Placeable>>()
+        var currentRow = mutableListOf<Placeable>()
+        var currentRowWidth = 0
 
-        val itemsToShow = if (isExpanded) searchHistory else searchHistory.take(maxItems)
-
-        for (item in itemsToShow) {
-            val itemText = if (item.length > 7) "${item.take(7)}..." else item
-            val itemWidth = itemText.length * 20.dp + buttonPadding  // Assuming 14.dp per character
-
-            if (currentRowWidth + itemWidth > screenWidth) {
-                rows.add(currentRowItems)
-                currentRowItems = mutableListOf()
-                currentRowWidth = 0.dp
+        placeables.forEach { placeable ->
+            if (currentRowWidth + placeable.width <= constraints.maxWidth) {
+                currentRow.add(placeable)
+                currentRowWidth += placeable.width + horizontalSpacing.toPx().toInt()
+            } else {
+                rows.add(currentRow)
+                currentRow = mutableListOf(placeable)
+                currentRowWidth = placeable.width + horizontalSpacing.toPx().toInt()
             }
-
-            currentRowItems.add(item)
-            currentRowWidth += itemWidth
         }
 
-        if (currentRowItems.isNotEmpty()) {
-            rows.add(currentRowItems)
+        if (currentRow.isNotEmpty()) {
+            rows.add(currentRow)
+            if(rows.size > 2){
+                onRowsExceededMax()
+            }
         }
 
-        rows.forEach { rowItems ->
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-                rowItems.forEach { record ->
-                    Button(onClick = { /* TODO 点击逻辑 */ }, modifier = Modifier.padding(4.dp)) {
-                        Text(text = if (record.length > 8) "${record.take(8)}..." else record)
-                    }
+
+
+        if (rows.size > maxRows) {
+            rows.subList(maxRows, rows.size).clear()
+        }
+
+
+        val height = rows.sumOf { row ->
+            row.maxOf { it.height }
+        } + (rows.size - 1) * verticalSpacing.toPx().toInt()
+
+        val layoutHeight = height.coerceIn(0, constraints.maxHeight)
+        val layoutWidth = constraints.maxWidth.coerceAtLeast(0)
+
+        layout(layoutWidth, layoutHeight) {
+            var yOffset = 0
+
+            rows.forEach { row ->
+                var xOffset = 0
+
+                row.forEach { placeable ->
+                    placeable.placeRelative(x = xOffset, y = yOffset)
+                    xOffset += placeable.width + horizontalSpacing.toPx().toInt()
                 }
-            }
-        }
 
-        if (searchHistory.size > maxItems && !isExpanded) {
-            Button(onClick = onExpandToggle, modifier = Modifier.padding(4.dp)) {
-                Text(text = "更多")
-            }
-        }
-        if (isExpanded) {
-            Button(onClick = onExpandToggle, modifier = Modifier.padding(4.dp)) {
-                Text(text = "收起")
+                yOffset += row.maxOf { it.height } + verticalSpacing.toPx().toInt()
             }
         }
     }
@@ -202,5 +313,5 @@ fun SearchHistorySection(
 @Composable
 fun ASPrev(){
     val navController = rememberNavController()
-    ArticleSearchScreen(navController = navController)
+//    ArticleSearchScreen(navController = navController)
 }

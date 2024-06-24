@@ -23,7 +23,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.sharp.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,21 +32,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import cn.chiichen.gamevibes.R
 import cn.chiichen.gamevibes.ui.common.carousel.Carousel
-import cn.chiichen.gamevibes.ui.games.GamesScreen
 
 @Composable
-fun GameDetailScreen(){
+fun GameDetailScreen(navController: NavHostController, id: String) {
 
     //测试数据
-    val images: List<Int> = listOf(
-        R.drawable.image4,
-        R.drawable.image3,
-        R.drawable.image1,
-        R.drawable.image2,
-        R.drawable.image1,
+    val images: List<String> = listOf(
+//        R.drawable.image4,
+//        R.drawable.image3,
+//        R.drawable.image1,
+//        R.drawable.image2,
+//        R.drawable.image1,
     )
 
     Column {
@@ -197,5 +196,5 @@ private fun RowItem(){
 @Composable
 private fun Prev (){
     val navController = rememberNavController()
-    GameDetailScreen()
+    GameDetailScreen(navController, "10")
 }

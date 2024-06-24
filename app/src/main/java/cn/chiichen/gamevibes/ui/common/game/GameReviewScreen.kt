@@ -1,4 +1,4 @@
-package cn.chiichen.gamevibes.ui.games
+package cn.chiichen.gamevibes.ui.common.game
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.SnapPosition
@@ -137,10 +137,4 @@ fun GameReviewScreen(){
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun Prev (){
-    GameReviewScreen()
 }

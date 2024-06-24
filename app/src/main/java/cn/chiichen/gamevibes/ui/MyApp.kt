@@ -12,7 +12,7 @@ import cn.chiichen.gamevibes.ui.navigation.BottomNavigationBar
 import cn.chiichen.gamevibes.ui.navigation.NavigationHost
 
 @Composable
-fun MyApp(context: Context) {
+fun MyApp() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -26,8 +26,7 @@ fun MyApp(context: Context) {
         }
     ) { innerPadding ->
         NavigationHost(navController = navController,
-            modifier = Modifier.padding(innerPadding),
-            context = context
+            modifier = Modifier.padding(innerPadding)
         )
     }
 }

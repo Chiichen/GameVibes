@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -49,8 +49,8 @@ fun Hot(viewModel: HotViewModel = viewModel()) {
         modifier = Modifier.fillMaxSize(),
         state = listState
     ) {
-        items(articles) { article ->
-            RowItem(article = article)
+        itemsIndexed(articles) {index, article ->
+            RowItem(index = index, article = article)
         }
     }
 
@@ -69,7 +69,7 @@ fun Hot(viewModel: HotViewModel = viewModel()) {
 }
 
 @Composable
-private fun RowItem(article: Article) {
+private fun RowItem(index: Int, article: Article) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -79,11 +79,11 @@ private fun RowItem(article: Article) {
         horizontalArrangement = Arrangement.Center
     ) {
         Box(
-            modifier = Modifier.width(20.dp),
+            modifier = Modifier.width(40.dp),
         ) {
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = "${article.id + 1}",
+                text = "${index + 1}",
                 fontSize = 20.sp
             )
         }
@@ -146,6 +146,6 @@ fun Prev(){
         "2024-06-02T14:15:22Z",10,
         "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
         "测试类型")
-    RowItem(article = article)
+    RowItem(index = 0, article = article)
 //    Hot()
 }
