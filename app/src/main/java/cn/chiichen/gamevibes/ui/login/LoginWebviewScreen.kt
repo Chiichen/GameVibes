@@ -35,6 +35,31 @@ fun LoginWebview(navController: NavController) {
     val casdoor = Casdoor(casdoorConfig)
     val loginUrl = casdoor.getSignInUrl(scope = "profile")
     Log.i("Login", String.format("LoginWebview: loginUrl %s", loginUrl))
+//    AndroidView(
+//        factory = { context ->
+//            WebView(context).apply {
+//                webViewClient = object : WebViewClient() {
+//                    override fun shouldOverrideUrlLoading(
+//                        view: WebView?,
+//                        request: WebResourceRequest?
+//                    ): Boolean {
+//                        val url = request?.url.toString()
+//                        if (url.startsWith(GameVibesConfig.casdoor_redirectUri)) {
+//                            // 处理重定向URL，提取登录信息
+//                            val code = url.substringAfter("code=")
+//                            // 使用code获取token或其他信息
+//                            return true
+//                        }
+//                        return super.shouldOverrideUrlLoading(view, request)
+//                    }
+//                }
+//                settings.javaScriptEnabled = true
+//                loadUrl(loginUrl)
+//            }
+//        },
+//        modifier = Modifier.fillMaxSize()
+//    )
+
     var rememberWebViewProgress: Int by remember { mutableIntStateOf(-1) }
     Box {
         CustomWebView(
@@ -70,12 +95,14 @@ fun LoginWebview(navController: NavController) {
             }, overrideUrlLoading = { _, request ->
                 val url = request?.url.toString()
                 val uri = Uri.parse(url)
-                if (uri.scheme.toString() == "casdoor") {
+                if (uri.toString()
+                        .startsWith(GameVibesConfig.casdoor_endpoint + "/login/oauth/" + GameVibesConfig.casdoor_redirectUri)
+                ) {
                     val code: String? = uri.getQueryParameter("code")
                     if (!TextUtils.isEmpty(code)) {
                         val mmkv = MMKV.defaultMMKV()
-                        Log.i("Login", String.format("inserting login token %s", code))
                         mmkv.putString("login_token", code)
+                        navController.popBackStack();
                         return@CustomWebView true
                     }
                 }
