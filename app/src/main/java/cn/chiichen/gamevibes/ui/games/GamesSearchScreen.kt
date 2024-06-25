@@ -2,6 +2,7 @@ package cn.chiichen.gamevibes.ui.games
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -114,7 +115,7 @@ fun GamesSearchScreen(navController: NavController,viewModel: GamesViewModel){
             modifier = Modifier.fillMaxSize()
         ) {
             items(relatedGames){item ->
-                RowItem(item)
+                RowItem(navController,item)
             }
         }
 
@@ -134,12 +135,15 @@ fun GamesSearchScreen(navController: NavController,viewModel: GamesViewModel){
 }
 
 @Composable
-private fun RowItem(game: Game){
+private fun RowItem(navController: NavController,game: Game){
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
-            .height(80.dp),
+            .height(80.dp)
+            .clickable(onClick = {
+                navController.navigate("gameDetail/${game.id}")
+            }),
         verticalAlignment = Alignment.CenterVertically
     ) {
 

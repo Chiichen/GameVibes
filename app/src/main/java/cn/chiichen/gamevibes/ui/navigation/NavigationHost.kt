@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import cn.chiichen.gamevibes.ui.common.article.ArticleDetailScreen
 import cn.chiichen.gamevibes.ui.common.game.GameDetailScreen
+import cn.chiichen.gamevibes.ui.common.game.GameReviewScreen
 import cn.chiichen.gamevibes.ui.games.GamesScreen
 import cn.chiichen.gamevibes.ui.games.GamesSearchScreen
 import cn.chiichen.gamevibes.ui.games.GamesViewModel
@@ -48,6 +49,10 @@ fun NavigationHost(
         composable("gameDetail/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
             if(id != null) GameDetailScreen(navController,id) }
+        composable("gameReview/{name}"){backStackEntry ->
+            val name = backStackEntry.arguments?.getString("name")
+            GameReviewScreen(navController,name)
+        }
         composable("post") { PostScreen(navController) }
         composable("messages") { MessagesScreen() }
         composable("profile") { ProfileScreen(navController) }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +25,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,22 +35,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import cn.chiichen.gamevibes.R
 import cn.chiichen.gamevibes.ui.common.carousel.Carousel
+import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun GameDetailScreen(navController: NavHostController, id: String) {
-
-    //测试数据
-    val images: List<String> = listOf(
-//        R.drawable.image4,
-//        R.drawable.image3,
-//        R.drawable.image1,
-//        R.drawable.image2,
-//        R.drawable.image1,
-    )
+fun GameDetailScreen(navController: NavHostController, id: String, viewModel: GameDetailViewModel = viewModel()) {
+    val images by viewModel.images.collectAsState()
 
     Column {
         TopAppBar(
@@ -56,7 +53,9 @@ fun GameDetailScreen(navController: NavHostController, id: String) {
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = "",
@@ -68,7 +67,7 @@ fun GameDetailScreen(navController: NavHostController, id: String) {
                             .weight(1f),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "Name")
+                        Text(text = viewModel.title.value)
                     }
                     IconButton(onClick = {}) {}
                 }
@@ -82,17 +81,17 @@ fun GameDetailScreen(navController: NavHostController, id: String) {
                 Carousel(images = images)
             }
             item{
-                GameDescription()
+                GameDescription(viewModel.content.value)
             }
             item{
-                GameReview()
+                GameReview(navController, viewModel)
             }
         }
     }
 }
 
 @Composable
-fun GameDescription() {
+fun GameDescription(content: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -107,7 +106,7 @@ fun GameDescription() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "《浮岛物语》+双人联机+全球史上最低价格=《浮岛物语》国服手机版，今天终于正式发售了！...",
+                text = content,
                 fontSize = 14.sp,
                 color = Color.Gray
             )
@@ -115,7 +114,9 @@ fun GameDescription() {
     }
 }
 @Composable
-fun GameReview() {
+fun GameReview(navController: NavHostController,viewModel: GameDetailViewModel) {
+    val rating = viewModel.rating.doubleValue
+    val reviews by viewModel.reviews.collectAsState()
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -124,45 +125,74 @@ fun GameReview() {
         shape = RoundedCornerShape(16.dp)
     ) {
         Column{
-            Column(modifier = Modifier.padding(15.dp)){
+            Column(modifier = Modifier.padding(15.dp).fillMaxWidth()){
                 Text(text = "玩家点评")
                 Spacer(modifier = Modifier.height(5.dp))
                 Row(
-                    modifier = Modifier.height(40.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(painter = painterResource(id = R.drawable.ic_avatar),
+                    Image(painter = rememberAsyncImagePainter(model = viewModel.avatar),
                         contentDescription = ""
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "发布你的点评")
                     Spacer(modifier = Modifier.weight(1f))
                     Row(
-                        modifier = Modifier.clickable(onClick = {/* TODO */})
+                        modifier = Modifier.clickable(onClick = {
+                           navController.navigate("gameReview/${viewModel.title.value}")
+                        })
                     ){
-                        Icon(imageVector = Icons.Default.Star, contentDescription = "")
-                        Icon(imageVector = Icons.Default.Star, contentDescription = "")
-                        Icon(imageVector = Icons.Default.Star, contentDescription = "")
-                        Icon(imageVector = Icons.Default.Star, contentDescription = "")
-                        Icon(imageVector = Icons.Default.Star, contentDescription = "")
+                        Image(
+                            painter = painterResource(
+                                id = if (rating >= 2.0) R.drawable.ic_star_click
+                                else R.drawable.ic_star
+                            ),
+                            contentDescription = ""
+                        )
+                        Image(
+                            painter = painterResource(
+                                id = if (rating >= 4.0) R.drawable.ic_star_click
+                                else R.drawable.ic_star
+                            ),
+                            contentDescription = ""
+                        )
+                        Image(
+                            painter = painterResource(
+                                id = if (rating >= 6.0) R.drawable.ic_star_click
+                                else R.drawable.ic_star
+                            ),
+                            contentDescription = ""
+                        )
+                        Image(
+                            painter = painterResource(
+                                id = if (rating >= 8.0) R.drawable.ic_star_click
+                                else R.drawable.ic_star
+                            ),
+                            contentDescription = ""
+                        )
+                        Image(
+                            painter = painterResource(
+                                id = if (rating >= 10.0) R.drawable.ic_star_click
+                                else R.drawable.ic_star
+                            ),
+                            contentDescription = ""
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.height(5.dp))
             }
             Divider(color = Color.Gray, thickness = 1.dp)
-            RowItem()
-            RowItem()
-            RowItem()
-            RowItem()
-            RowItem()
-            RowItem()
-            RowItem()
+           reviews.forEach {
+                RowItem(it)
+            }
         }
     }
 }
 
 @Composable
-private fun RowItem(){
+private fun RowItem(review: Review) {
+    val rating = review.rating
     Column(
         modifier = Modifier.padding(10.dp)
     ) {
@@ -170,25 +200,60 @@ private fun RowItem(){
             modifier = Modifier.height(40.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(painter = painterResource(id = R.drawable.ic_avatar),
+            Image(painter = rememberAsyncImagePainter(model = review.avatar),
                 contentDescription = ""
             )
             Spacer(modifier = Modifier.width(5.dp))
             Column(
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = "id")
-                Text(text = "time")
+                Text(text = review.name)
+                Text(text = review.time)
             }
         }
         Row {
-            Icon(imageVector = Icons.Default.Star, contentDescription = "")
-            Icon(imageVector = Icons.Default.Star, contentDescription = "")
-            Icon(imageVector = Icons.Default.Star, contentDescription = "")
-            Icon(imageVector = Icons.Default.Star, contentDescription = "")
-            Icon(imageVector = Icons.Default.Star, contentDescription = "")
+            Image(
+                painter = painterResource(
+                    id = if (rating >= 2.0) R.drawable.ic_star_click
+                    else R.drawable.ic_star
+                ),
+                contentDescription = "",
+                modifier = Modifier.size(20.dp)
+            )
+            Image(
+                painter = painterResource(
+                    id = if (rating >= 4.0) R.drawable.ic_star_click
+                    else R.drawable.ic_star
+                ),
+                contentDescription = "",
+                modifier = Modifier.size(20.dp)
+            )
+            Image(
+                painter = painterResource(
+                    id = if (rating >= 6.0) R.drawable.ic_star_click
+                    else R.drawable.ic_star
+                ),
+                contentDescription = "",
+                modifier = Modifier.size(20.dp)
+            )
+            Image(
+                painter = painterResource(
+                    id = if (rating >= 8.0) R.drawable.ic_star_click
+                    else R.drawable.ic_star
+                ),
+                contentDescription = "",
+                modifier = Modifier.size(20.dp)
+            )
+            Image(
+                painter = painterResource(
+                    id = if (rating >= 10.0) R.drawable.ic_star_click
+                    else R.drawable.ic_star
+                ),
+                contentDescription = "",
+                modifier = Modifier.size(20.dp)
+            )
         }
-        Text(text = "comment")
+        Text(text = review.comment)
     }
 }
 

@@ -2,6 +2,7 @@ package cn.chiichen.gamevibes.ui.games
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import cn.chiichen.gamevibes.R
 import coil.compose.rememberAsyncImagePainter
@@ -106,7 +108,7 @@ fun GamesScreen(navController: NavHostController, viewModel: GamesViewModel) {
             modifier = Modifier.fillMaxSize()
         ) {
             itemsIndexed(games) {index,item ->
-                RowItem(index,item)
+                RowItem(navController,index,item)
             }
         }
     }
@@ -126,12 +128,15 @@ fun GamesScreen(navController: NavHostController, viewModel: GamesViewModel) {
 }
 
 @Composable
-private fun RowItem(index: Int, game: Game) {
+private fun RowItem(navController: NavController, index: Int, game: Game) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
-            .height(80.dp),
+            .height(80.dp)
+            .clickable(onClick = {
+                navController.navigate("gameDetail/${game.id}")
+            }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = "${index + 1}" , modifier = Modifier.width(30.dp), fontWeight = FontWeight.Bold)

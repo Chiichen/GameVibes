@@ -101,8 +101,8 @@ fun HomeScreen(navController: NavController) {
             }
         )
         when (selectedTabIndex) {
-            0 -> Recommend()
-            1 -> Hot()
+            0 -> Recommend(navController = navController)
+            1 -> Hot(navController = navController)
         }
     }
 }

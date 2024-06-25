@@ -1,7 +1,7 @@
 package cn.chiichen.gamevibes.ui.common.game
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,22 +19,33 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import cn.chiichen.gamevibes.R
 
 @Composable
-fun GameReviewScreen(){
+fun GameReviewScreen(navController: NavController, name: String?,viewModel: GameReviewViewModel = viewModel()){
+    var rating by remember { mutableDoubleStateOf(viewModel.rating.doubleValue) }
+    var content by remember {
+        mutableStateOf(viewModel.content.value)
+    }
     Column(
         modifier = Modifier.background(colorResource(id = R.color.grey))
     ) {
@@ -46,7 +57,9 @@ fun GameReviewScreen(){
                 .fillMaxWidth()
                 .padding(10.dp)
         ) {
-            IconButton(onClick = { /*TODO*/}) {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.ArrowBack,
                     contentDescription = "",
@@ -86,36 +99,87 @@ fun GameReviewScreen(){
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Default.Star, contentDescription = "")
+                    IconButton(onClick = {
+                        rating = 2.0
+                        viewModel.updateRating(rating)
+                    }) {
+                        Image(
+                            painter = painterResource(
+                                id = if (rating >= 2.0) R.drawable.ic_star_click
+                                    else R.drawable.ic_star
+                            ),
+                            contentDescription = ""
+                        )
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Default.Star, contentDescription = "")
+                    IconButton(onClick = {
+                        rating = 4.0
+                        viewModel.updateRating(rating)
+                    }) {
+                        Image(
+                            painter = painterResource(
+                                id = if (rating >= 4.0) R.drawable.ic_star_click
+                                else R.drawable.ic_star
+                            ),
+                            contentDescription = ""
+                        )
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Default.Star, contentDescription = "")
+                    IconButton(onClick = {
+                        rating = 6.0
+                        viewModel.updateRating(rating)
+                    }) {
+                        Image(
+                            painter = painterResource(
+                                id = if (rating >= 6.0) R.drawable.ic_star_click
+                                else R.drawable.ic_star
+                            ),
+                            contentDescription = ""
+                        )
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Default.Star, contentDescription = "")
+                    IconButton(onClick = {
+                        rating = 8.0
+                        viewModel.updateRating(rating)
+                    }) {
+                        Image(
+                            painter = painterResource(
+                                id = if (rating >= 8.0) R.drawable.ic_star_click
+                                else R.drawable.ic_star
+                            ),
+                            contentDescription = ""
+                        )
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Default.Star, contentDescription = "")
+                    IconButton(onClick = {
+                        rating = 10.0
+                        viewModel.updateRating(rating)
+                    }) {
+                        Image(
+                            painter = painterResource(
+                                id = if (rating >= 10.0) R.drawable.ic_star_click
+                                else R.drawable.ic_star
+                            ),
+                            contentDescription = ""
+                        )
                     }
                 }
+                Spacer(modifier = Modifier.height(10.dp))
                 Row(
                     modifier = Modifier
                         .padding(vertical = 5.dp)
-                        .background(Color.Gray)
+                        .background(Color.Gray),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "name",
+                        text = name!!,
                         modifier = Modifier
                             .padding(horizontal = 20.dp , vertical = 5.dp)
                     )
                 }
                 TextField(
-                    value = "评价内容...",
-                    onValueChange = {},
+                    value = content,
+                    onValueChange = {
+                        content = it
+                        viewModel.updateContent(content)
+                    },
+                    placeholder = { Text(text = "评价内容...")},
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -125,7 +189,10 @@ fun GameReviewScreen(){
                     )
                 )
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        viewModel.postGameReview()
+                        navController.popBackStack()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp)
@@ -137,4 +204,12 @@ fun GameReviewScreen(){
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun Prev (){
+    val navController = rememberNavController()
+    GameReviewScreen(navController, "name")
+
 }

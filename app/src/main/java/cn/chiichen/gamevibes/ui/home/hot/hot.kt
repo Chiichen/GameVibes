@@ -1,6 +1,7 @@
 package cn.chiichen.gamevibes.ui.home.hot
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,20 +38,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import cn.chiichen.gamevibes.model.entities.Article
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun Hot(viewModel: HotViewModel = viewModel()) {
+fun Hot(navController: NavController,viewModel: HotViewModel = viewModel()) {
     val articles by viewModel.articles.collectAsState()
     val listState = rememberLazyListState()
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState
     ) {
         itemsIndexed(articles) {index, article ->
-            RowItem(index = index, article = article)
+            RowItem(navController,index = index, article = article)
         }
     }
 
@@ -69,12 +70,15 @@ fun Hot(viewModel: HotViewModel = viewModel()) {
 }
 
 @Composable
-private fun RowItem(index: Int, article: Article) {
+private fun RowItem(navController: NavController,index: Int, article: Article) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp)
-            .height(80.dp),
+            .height(80.dp)
+            .clickable(onClick = {
+                navController.navigate("article/${article.id}")
+            }),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -127,7 +131,7 @@ private fun RowItem(index: Int, article: Article) {
         }
         Spacer(modifier = Modifier.width(5.dp))
         Image(
-            painter = rememberAsyncImagePainter(article.imageRes),
+            painter = rememberAsyncImagePainter(article.image),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -136,16 +140,4 @@ private fun RowItem(index: Int, article: Article) {
                 .clip(RoundedCornerShape(8.dp))
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun Prev(){
-    val article:Article
-            = Article(1,"title",100,
-        "2024-06-02T14:15:22Z",10,
-        "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-        "测试类型")
-    RowItem(index = 0, article = article)
-//    Hot()
 }

@@ -1,13 +1,11 @@
 package cn.chiichen.gamevibes.network
 
 
-import cn.chiichen.gamevibes.model.entities.Article
-import cn.chiichen.gamevibes.service.ArticleApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "https://api.example.com/"
+    private const val BASE_URL = "http://8.138.154.250"
 
     val instance: Retrofit by lazy {
         Retrofit.Builder()

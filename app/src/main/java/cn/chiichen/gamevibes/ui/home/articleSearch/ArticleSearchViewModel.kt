@@ -77,36 +77,18 @@ class ArticleSearchViewModel :ViewModel() {
             currentPage = 0
             // 测试数据 todo delete
             _articles.value = listOf(
-                Article(
-                    1, "title", 100,
-                    "2024-06-02T14:15:22Z", 10,
-                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    "测试类型"
-                ),
-                Article(
-                    2, "title", 100,
-                    "2024-06-02T14:15:22Z", 10,
-                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    "测试类型"
-                ),
-                Article(
-                    3, "title", 100,
-                    "2024-06-02T14:15:22Z", 10,
-                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    "测试类型"
-                ),
-                Article(
-                    4, "title", 100,
-                    "2024-06-02T14:15:22Z", 10,
-                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    "测试类型"
-                ),
-                Article(
-                    5, "title", 100,
-                    "2024-06-02T14:15:22Z", 10,
-                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    "测试类型"
-                )
+                Article(id = 1, title = "title", comments = 100,
+                    postTime = "2024-06-02T14:15:22Z",pv = 10,
+                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    type = "测试类型"),
+                Article(id = 2, title = "title", comments = 100,
+                    postTime = "2024-06-02T14:15:22Z",pv = 10,
+                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    type = "测试类型"),
+                Article(id = 3, title = "title", comments = 100,
+                    postTime = "2024-06-02T14:15:22Z",pv = 10,
+                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    type = "测试类型"),
             )
         }
     }
@@ -115,36 +97,18 @@ class ArticleSearchViewModel :ViewModel() {
         viewModelScope.launch {
             // 测试数据 todo delete
             _articles.value += listOf(
-                Article(
-                    1, "title", 100,
-                    "2024-06-02T14:15:22Z", 10,
-                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    "测试类型"
-                ),
-                Article(
-                    2, "title", 100,
-                    "2024-06-02T14:15:22Z", 10,
-                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    "测试类型"
-                ),
-                Article(
-                    3, "title", 100,
-                    "2024-06-02T14:15:22Z", 10,
-                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    "测试类型"
-                ),
-                Article(
-                    4, "title", 100,
-                    "2024-06-02T14:15:22Z", 10,
-                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    "测试类型"
-                ),
-                Article(
-                    5, "title", 100,
-                    "2024-06-02T14:15:22Z", 10,
-                    "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    "测试类型"
-                )
+                Article(id = 1, title = "title", comments = 100,
+                    postTime = "2024-06-02T14:15:22Z",pv = 10,
+                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    type = "测试类型"),
+                Article(id = 2, title = "title", comments = 100,
+                    postTime = "2024-06-02T14:15:22Z",pv = 10,
+                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    type = "测试类型"),
+                Article(id = 3, title = "title", comments = 100,
+                    postTime = "2024-06-02T14:15:22Z",pv = 10,
+                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+                    type = "测试类型"),
             )
         }
     }

@@ -1,6 +1,7 @@
 package cn.chiichen.gamevibes.ui.home.articleSearch
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -139,7 +140,7 @@ fun ArticleSearchResultScreen(navController: NavHostController,viewModel:Article
             state = listState
         ) {
             items(articles) {article ->
-                RowItem(article = article)
+                RowItem(navController,article = article)
             }
         }
     }
@@ -159,12 +160,15 @@ fun ArticleSearchResultScreen(navController: NavHostController,viewModel:Article
 }
 
 @Composable
-private fun RowItem(article: Article) {
+private fun RowItem(navController: NavHostController,article: Article) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp)
-            .height(80.dp),
+            .height(80.dp)
+            .clickable(onClick = {
+                navController.navigate("article/${article.id}")
+            }),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -208,7 +212,7 @@ private fun RowItem(article: Article) {
         }
         Spacer(modifier = Modifier.width(5.dp))
         Image(
-            painter = rememberAsyncImagePainter(article.imageRes),
+            painter = rememberAsyncImagePainter(article.image),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier

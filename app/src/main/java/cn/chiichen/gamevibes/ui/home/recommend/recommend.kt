@@ -2,6 +2,7 @@ package cn.chiichen.gamevibes.ui.home.recommend
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,12 +41,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import cn.chiichen.gamevibes.model.entities.Article
 import cn.chiichen.gamevibes.utils.timeConvertor
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun Recommend(viewModel: RecommendViewModel = viewModel()){
+fun Recommend(navController: NavController,viewModel: RecommendViewModel = viewModel()){
     val articles by viewModel.articles.collectAsState()
     val news by viewModel.news.collectAsState()
     val listState = rememberLazyListState()
@@ -55,10 +57,10 @@ fun Recommend(viewModel: RecommendViewModel = viewModel()){
         state = listState
     ) {
         item {
-            Carousel(news = news)
+            Carousel(navController = navController,news = news)
         }
         items(articles) { article ->
-            RowItem(article = article)
+            RowItem(article = article, navController = navController)
         }
     }
 
@@ -77,12 +79,15 @@ fun Recommend(viewModel: RecommendViewModel = viewModel()){
 }
 
 @Composable
-private fun RowItem(article: Article) {
+private fun RowItem(article: Article,navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp)
-            .height(80.dp),
+            .height(80.dp)
+            .clickable(onClick = {
+                navController.navigate("article/${article.id}")
+            }),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -126,7 +131,7 @@ private fun RowItem(article: Article) {
         }
         Spacer(modifier = Modifier.width(5.dp))
         Image(
-            painter = rememberAsyncImagePainter(article.imageRes),
+            painter = rememberAsyncImagePainter(article.image),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -138,7 +143,7 @@ private fun RowItem(article: Article) {
 }
 
 @Composable
-fun Carousel(news: List<Article>) {
+fun Carousel(navController: NavController,news: List<Article>) {
     val pagerState = rememberPagerState (
         initialPage = 0,
         pageCount = { news.size }
@@ -153,9 +158,11 @@ fun Carousel(news: List<Article>) {
             modifier = Modifier
                 .fillMaxSize()
         ) { page ->
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize().clickable(onClick = {
+                navController.navigate("article/${news[page].id}")
+            })) {
                 Image(
-                    painter = rememberAsyncImagePainter(news[page].imageRes),
+                    painter = rememberAsyncImagePainter(news[page].image),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -204,14 +211,4 @@ fun Carousel(news: List<Article>) {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PrevR(){
-    val article = Article(1,"title",100,
-        "2024-06-02T14:15:22Z",10,
-        "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-        "测试类型")
-    RowItem(article = article)
 }
