@@ -3,7 +3,8 @@ package cn.chiichen.gamevibes.ui.splash
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -34,7 +35,8 @@ fun SplashScreen(navController: NavHostController, context: Context) {
 }
 
 fun isFirstLaunch(context: Context): Boolean {
-    val sharedPreferences: SharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     val isFirstLaunch = sharedPreferences.getBoolean("is_first_launch", true)
     if (isFirstLaunch) {
         sharedPreferences.edit().putBoolean("is_first_launch", false).apply()
