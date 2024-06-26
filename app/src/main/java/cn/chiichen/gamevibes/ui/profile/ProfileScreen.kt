@@ -48,7 +48,7 @@ import cn.chiichen.gamevibes.ui.profile.review.ReviewScreen
 
 @Composable
 fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = viewModel()) {
-    if (viewModel.isLoggedIn) {
+    if (viewModel.isLoggedIn.value) {
         LoggedInProfileScreen(navController, viewModel)
     } else {
         LoggedOutProfileScreen(navController)
@@ -129,29 +129,33 @@ fun LoggedInProfileScreen(navController: NavController, viewModel: ProfileViewMo
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
-                    Text(text = viewModel.username, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                    Text(
+                        text = viewModel.username.value,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = viewModel.joinDate, color = Color.Gray)
-                    Text(text = viewModel.location, color = Color.Gray)
-                    Text(text = viewModel.id, color = Color.Gray)
+                    Text(text = viewModel.joinDate.value, color = Color.Gray)
+                    Text(text = viewModel.location.value, color = Color.Gray)
+                    Text(text = viewModel.id.value, color = Color.Gray)
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = viewModel.bio, color = Color.Gray)
+            Text(text = viewModel.bio.value, color = Color.Gray)
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = viewModel.following.toString(), fontWeight = FontWeight.Bold)
+                    Text(text = viewModel.following.value.toString(), fontWeight = FontWeight.Bold)
                     Text(text = "关注", color = Color.Gray)
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = viewModel.followers.toString(), fontWeight = FontWeight.Bold)
+                    Text(text = viewModel.followers.value.toString(), fontWeight = FontWeight.Bold)
                     Text(text = "粉丝", color = Color.Gray)
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = viewModel.likes.toString(), fontWeight = FontWeight.Bold)
+                    Text(text = viewModel.likes.value.toString(), fontWeight = FontWeight.Bold)
                     Text(text = "获赞与收藏", color = Color.Gray)
                 }
             }
