@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 data class LikeMessage(
-    val id: String,
+    val id: Long,
     val user: String,
     val content: String,
     val timestamp: String,
@@ -28,7 +28,7 @@ class LikeViewModel : ViewModel() {
             // 模拟从后台接口获取数据
             _likes.value = listOf(
                 LikeMessage(
-                    "1",
+                    1,
                     "一个ID",
                     "回复了我的帖子",
                     "1分钟前",
@@ -36,7 +36,7 @@ class LikeViewModel : ViewModel() {
                     false
                 ),
                 LikeMessage(
-                    "2",
+                    2,
                     "玩家67165008",
                     "测试一下帖子",
                     "1分钟前",

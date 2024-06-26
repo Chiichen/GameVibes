@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 data class SaveMessage(
-    val id: String,
+    val id: Long,
     val user: String,
     val content: String,
     val timestamp: String,
@@ -30,17 +30,17 @@ class SaveViewModel : ViewModel() {
             // 模拟从后台接口获取数据
             _saves.value = listOf(
                 SaveMessage(
-                    "1",
+                    1,
                     "一个ID",
-                    "回复了我的帖子",
+                    "收藏了我的帖子",
                     "1分钟前",
                     "https://example.com/image1.png",
                     false
                 ),
                 SaveMessage(
-                    "2",
+                    2,
                     "玩家67165008",
-                    "测试一下帖子",
+                    "收藏了我的帖子",
                     "1分钟前",
                     "https://example.com/image2.png",
                     true
