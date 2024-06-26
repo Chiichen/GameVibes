@@ -59,7 +59,8 @@ fun ArticleSearchResultScreen(navController: NavHostController,viewModel:Article
     var order = 0
 
     LaunchedEffect(Unit) {
-        viewModel.getArticles(searchText, order)
+        viewModel.clean()
+        viewModel.getArticles(order)
     }
 
     Column(modifier = Modifier
@@ -97,7 +98,9 @@ fun ArticleSearchResultScreen(navController: NavHostController,viewModel:Article
                     onSearch = {
                         if (searchText.isNotEmpty()) {
                             viewModel.addSearchHistory(searchText)
-                            viewModel.getArticles(searchText, order)
+                            viewModel.updateSearchText(searchText)
+                            viewModel.clean()
+                            viewModel.getArticles(order)
                         }
                     }
                 ),
@@ -124,7 +127,8 @@ fun ArticleSearchResultScreen(navController: NavHostController,viewModel:Article
             IconButton(
                 onClick = {
                     order = if(order == 0) 1 else 0
-                    viewModel.getArticles(searchText,order)
+                    viewModel.clean()
+                    viewModel.getArticles(order)
                 },
                 modifier = Modifier.padding(horizontal = 8.dp),
                 content = {
@@ -154,7 +158,7 @@ fun ArticleSearchResultScreen(navController: NavHostController,viewModel:Article
 
     LaunchedEffect(shouldLoadMore.value) {
         if (shouldLoadMore.value) {
-            viewModel.getMoreArticles()
+            viewModel.getArticles(order)
         }
     }
 }
@@ -191,7 +195,7 @@ private fun RowItem(navController: NavHostController,article: Article) {
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = timeConvertor(article.postTime) + " • " + article.type,
+                    text = timeConvertor(article.post_time) + " • " + article.type,
                     fontSize = 12.sp,
                     color = Color.Gray
                 )

@@ -7,14 +7,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -30,6 +34,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,65 +43,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import cn.chiichen.gamevibes.R
 import cn.chiichen.gamevibes.ui.common.carousel.Carousel
+import cn.chiichen.gamevibes.utils.timeConvertor
 import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 
 
 @Composable
-fun ArticleDetailScreen(navController: NavHostController, id: String, viewModel: ArticleDetailViewModel = viewModel()) {
-    //测试数据
-    val articleDetail = ArticleDetail(
-        images = listOf(
-            "https://dimg08.c-ctrip.com/images/fd/tg/g2/M00/D4/1C/Cghzf1VDK02Ad48xACTS77Yxmh0444.jpg",
-            "https://pic4.zhimg.com/v2-c00c4fd3c4d3bf42c5f0af829debc6e2_r.jpg?source=1940ef5c",
-            "https://img0.baidu.com/it/u=896214020,274705695&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800",
-            "https://img1.baidu.com/it/u=2780218922,817541529&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1422",
-            "https://img1.baidu.com/it/u=3785324817,3055338308&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800"
-        ),
-        title = "An Interesting Article",
-        authorInfo = AuthorInfo(
-            avatar = "https://www.keaitupian.cn/cjpic/frombd/1/253/2232745444/1513375911.jpg",
-            name = "John Doe",
-            time = "2024-06-23",
-            isFollow = false
-        ),
-        tags = listOf("Kotlin", "Programming", "Android"),
-        content = "This is the content of the article. \nIt talks about various topics related to Kotlin programming and Android development.",
-        likes = 120,
-        favorites = 45,
-        comments = 10
-    )
-    //测试
-    val comments = listOf(
-        Comment(
-            avatar = "https://www.keaitupian.cn/cjpic/frombd/1/253/2232745444/1513375911.jpg",
-            name = "Jane Doe",
-            time = "2024-06-23 10:00",
-            content = "This is a comment content. Great article!"
-        ),
-        Comment(
-            avatar = "https://www.keaitupian.cn/cjpic/frombd/1/253/2232745444/1513375911.jpg",
-            name = "Jane Doe",
-            time = "2024-06-23 10:00",
-            content = "This is a comment content. Great article!"
-        ),
-        Comment(
-            avatar = "https://www.keaitupian.cn/cjpic/frombd/1/253/2232745444/1513375911.jpg",
-            name = "Jane Doe",
-            time = "2024-06-23 10:00",
-            content = "This is a comment content. Great article!"
-        ),
-    )
-
-
+fun ArticleDetailScreen(navController: NavHostController, id: String, viewModel: ArticleDetailViewModel = ArticleDetailViewModel(id.toLong())) {
+    val articleDetail by viewModel.articleDetail.collectAsState()
+    val comments by viewModel.comments.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -144,20 +108,18 @@ fun ArticleDetailScreen(navController: NavHostController, id: String, viewModel:
                 Text(text = articleDetail.title, fontSize = 30.sp)
             }
             item {
-                Author(articleDetail.authorInfo)
+                Author(articleDetail)
             }
             item {
                 Row {
-                    articleDetail.tags.forEach{
-                        Box(
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .background(
-                                    colorResource(id = R.color.grey)
-                                )
-                        ){
-                            Text(text = it,fontSize = 10.sp, modifier = Modifier.padding(5.dp))
-                        }
+                    Box(
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .background(
+                                colorResource(id = R.color.grey)
+                            )
+                    ){
+                        Text(text = articleDetail.type,fontSize = 10.sp, modifier = Modifier.padding(5.dp))
                     }
                 }
             }
@@ -165,7 +127,7 @@ fun ArticleDetailScreen(navController: NavHostController, id: String, viewModel:
                 Text(text = articleDetail.content, modifier = Modifier.padding(10.dp))
             }
             item {
-                Comment(comments)
+                Comment(comments,articleDetail.comments)
             }
         }
     }
@@ -179,7 +141,7 @@ fun BottomBar(articleDetail: ArticleDetail?) {
     var commentCount by remember { mutableIntStateOf(0) }
     if (articleDetail != null){
         likeCount = articleDetail.likes
-        favoriteCount = articleDetail.favorites
+        favoriteCount = articleDetail.favours
         commentCount = articleDetail.comments
     }
     Row(
@@ -233,7 +195,8 @@ fun BottomBar(articleDetail: ArticleDetail?) {
 
 
 @Composable
-internal fun Author(authorInfo: AuthorInfo) {
+internal fun Author(articleDetail: ArticleDetail) {
+
     Row(
         modifier = Modifier
             .height(50.dp)
@@ -243,29 +206,39 @@ internal fun Author(authorInfo: AuthorInfo) {
     ) {
         //头像
         Image(
-            painter = rememberAsyncImagePainter(authorInfo.avatar),
+            painter = rememberAsyncImagePainter(
+                ImageRequest.Builder(LocalContext.current)
+                    .data(data = articleDetail.avatar)
+                    .apply {
+                        crossfade(true)
+                        placeholder(R.drawable.ic_avatar)
+                        error(R.drawable.ic_avatar)
+                    }.build()
+            ),
             contentDescription = "",
             modifier = Modifier
-                .fillMaxHeight()
+                .size(50.dp)// Set the size to 50.dp to make it square
                 .padding(horizontal = 5.dp)
         )
+
         Column {
-            Text(text = authorInfo.name)
-            Text(text = authorInfo.time, color = Color.Gray)
+            Text(text = articleDetail.user_name)
+            Text(text = timeConvertor(articleDetail.post_time), color = Color.Gray)
         }
         Spacer(modifier = Modifier.weight(1f))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { articleDetail.is_focus = if (articleDetail.is_focus == 0) 1 else 0 },
+            colors = ButtonDefaults.buttonColors(Color.Black)
         ) {
-            if(!authorInfo.isFollow) Text(text = "+关注", fontSize = 10.sp)
-            else Text(text = "已关注" , fontSize = 10.sp)
+            if (articleDetail.is_focus == 0) Text(text = "+关注", fontSize = 10.sp, color = Color.White)
+            else Text(text = "已关注", fontSize = 10.sp, color = Color.White)
         }
     }
+
 }
 
 @Composable
-fun Comment(comments:List<Comment>) {
-    val number = 10
+fun Comment(comments:List<Comment>,number: Int) {
     ScrollableTabRow(
         backgroundColor = Color.White,
         selectedTabIndex = 0,
@@ -285,8 +258,8 @@ fun Comment(comments:List<Comment>) {
 
 @Composable
 internal fun RowItem(comment: Comment) {
-    val titleFontSize = 20.sp
-    val timeFontSize = 15.sp
+    val titleFontSize = 18.sp
+    val timeFontSize = 12.sp
 
     Row(
         modifier = Modifier
@@ -302,26 +275,22 @@ internal fun RowItem(comment: Comment) {
         )
         Column {
             Text(
-                text = comment.name,
+                text = comment.username,
                 fontSize = titleFontSize,
-                modifier = Modifier.height(titleFontSize.value.dp)
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.heightIn(min = titleFontSize.value.dp)
             )
             Text(
-                text = comment.time,
+                text = timeConvertor(comment.post_time),
                 color = Color.Gray,
                 fontSize = timeFontSize,
-                modifier = Modifier.height(timeFontSize.value.dp)
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.heightIn(min = timeFontSize.value.dp)
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(text = comment.content)
         }
     }
-}
-
-
-@Composable
-@Preview(showBackground = true)
-fun ADPrev(){
-    val navController = rememberNavController()
-    ArticleDetailScreen(navController, "0")
 }

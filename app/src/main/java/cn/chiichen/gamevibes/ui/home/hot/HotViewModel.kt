@@ -3,7 +3,9 @@ package cn.chiichen.gamevibes.ui.home.hot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cn.chiichen.gamevibes.model.entities.Article
+import cn.chiichen.gamevibes.model.request.PageRequest
 import cn.chiichen.gamevibes.model.response.ArticleResponse
+import cn.chiichen.gamevibes.model.response.BaseResponse
 import cn.chiichen.gamevibes.network.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +18,7 @@ class HotViewModel :ViewModel() {
     private val _articles = MutableStateFlow<List<Article>>(emptyList())
     val articles: StateFlow<List<Article>> = _articles
 
-    private var currentPage = 0
+    private var currentPage = 1
 
     init {
         loadMore()
@@ -24,36 +26,22 @@ class HotViewModel :ViewModel() {
 
     fun loadMore() {
         viewModelScope.launch {
-            // 测试数据 todo delete
-            _articles.value += listOf(
-                Article(id = 1, title = "title", comments = 100,
-                    postTime = "2024-06-02T14:15:22Z",pv = 10,
-                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    type = "测试类型"),
-                Article(id = 2, title = "title", comments = 100,
-                    postTime = "2024-06-02T14:15:22Z",pv = 10,
-                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    type = "测试类型"),
-                Article(id = 3, title = "title", comments = 100,
-                    postTime = "2024-06-02T14:15:22Z",pv = 10,
-                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    type = "测试类型"),
-            )
-
-            val call = RetrofitClient.articleApiService.getHotList(currentPage, 10)
-            call.enqueue(object : Callback<ArticleResponse> {
-                override fun onResponse(call: Call<ArticleResponse>, response: Response<ArticleResponse>) {
+            val call = RetrofitClient.articleApiService.getHotList(pageRequest = PageRequest(currentPage, 10))
+            call.enqueue(object : Callback<BaseResponse<ArticleResponse>> {
+                override fun onResponse(call: Call<BaseResponse<ArticleResponse>>, response: Response<BaseResponse<ArticleResponse>>) {
                     if (response.isSuccessful) {
                         val articleResponse = response.body()
                         if (articleResponse != null) {
-                            _articles.value += articleResponse.articles
+                            val updatedArticles = _articles.value.toMutableList()
+                            updatedArticles.addAll(articleResponse.data.records)
+                            _articles.value = updatedArticles
                             currentPage += 1
                         }
                     }
                 }
 
-                override fun onFailure(call: Call<ArticleResponse>, t: Throwable) {
-
+                override fun onFailure(call: Call<BaseResponse<ArticleResponse>>, t: Throwable) {
+                    // 处理错误，比如记录日志或者显示提示
                 }
             })
         }

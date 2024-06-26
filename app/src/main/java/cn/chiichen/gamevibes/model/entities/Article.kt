@@ -7,23 +7,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
-
 data class Article(
-    val comments: Int,
-    val id: Int,
-    val image: String,
-    val postTime: String,
-    val pv: Int,
+    val id: Long,
     val title: String,
-    val type: String
+    val type: String,
+    val image: String,
+    val comments: Int,
+    val pv: Int,
+    val post_time: String,
 )
-
-data class ArticleData(
-    val records: List<Article>,
-    val total: Int
-)
-
-//fun loadMoreArticles(startIndex: Int, count: Int): List<Article> {
-//    return List(count) { index -> Article(startIndex + index, "Article Title ${startIndex + index}") }
-//}

@@ -43,15 +43,17 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import cn.chiichen.gamevibes.R
 
 @Composable
 fun ArticleSearchScreen(navController: NavHostController,viewModel: ArticleSearchViewModel) {
+    LaunchedEffect(Unit) {
+        viewModel.getSearchFinding()
+        viewModel.getHotTopics()
+    }
 
     var searchText by remember {mutableStateOf(viewModel.searchText.value)}
     var maxRows by remember { mutableIntStateOf(2) }
@@ -61,10 +63,6 @@ fun ArticleSearchScreen(navController: NavHostController,viewModel: ArticleSearc
     val hotTopics by viewModel.hotTopics.collectAsState()
 
 
-    LaunchedEffect(Unit) {
-        viewModel.getSearchFinding()
-        viewModel.getHotTopics()
-    }
 
     Column(
         modifier = Modifier
@@ -175,8 +173,9 @@ fun ArticleSearchScreen(navController: NavHostController,viewModel: ArticleSearc
                         for (colIndex in 0 until 2) {
                             val itemIndex = rowIndex * 2 + colIndex
                             if (itemIndex < searchFindings.size) {
+                                val displayedText = if (searchFindings[itemIndex].length > 7) searchFindings[itemIndex].substring(0, 7) + "..." else searchFindings[itemIndex]
                                 Text(
-                                    text = searchFindings[itemIndex],
+                                    text = displayedText,
                                     modifier = Modifier
                                         .weight(1f)
                                         .padding(8.dp)
@@ -220,8 +219,9 @@ fun ArticleSearchScreen(navController: NavHostController,viewModel: ArticleSearc
                         Text(text = "热门讨论", fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(20.dp))
                         hotTopics.forEachIndexed { index, topic ->
+                            val displayedTopic = if (topic.length > 15) topic.substring(0, 15) + "..." else topic
                             Text(
-                                text = "${index + 1}  $topic",
+                                text = "${index + 1}  $displayedTopic",
                                 modifier = Modifier
                                     .padding(vertical = 10.dp)
                                     .clickable(onClick = {
@@ -309,9 +309,3 @@ fun LimitedFlowRow(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ASPrev(){
-    val navController = rememberNavController()
-//    ArticleSearchScreen(navController = navController)
-}

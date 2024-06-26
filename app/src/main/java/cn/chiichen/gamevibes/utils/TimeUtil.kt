@@ -8,8 +8,8 @@ import java.time.format.DateTimeFormatter
 
 fun timeConvertor(postTime: String): String {
     // 解析传入的时间字符串
-    val formatter = DateTimeFormatter.ISO_INSTANT
-    val dateTime = LocalDateTime.ofInstant(Instant.from(formatter.parse(postTime)), ZoneId.systemDefault())
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    val dateTime = LocalDateTime.parse(postTime, formatter)
 
     // 获取当前时间
     val now = LocalDateTime.now()

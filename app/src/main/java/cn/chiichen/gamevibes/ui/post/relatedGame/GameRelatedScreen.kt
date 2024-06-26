@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cn.chiichen.gamevibes.R
-import cn.chiichen.gamevibes.ui.games.Game
+import cn.chiichen.gamevibes.model.entities.Game
 import cn.chiichen.gamevibes.ui.post.PostViewModel
 import coil.compose.rememberAsyncImagePainter
 
@@ -124,22 +124,16 @@ fun AfterColumn(games: List<Game>) {
                 Image(painter = rememberAsyncImagePainter(model = item.image), contentDescription = "")
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
-                    Text(text = item.title)
+                    Text(text = item.name)
                     Spacer(modifier = Modifier.height(10.dp))
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(imageVector = Icons.Default.Star, contentDescription = "")
-                        Text(text = "${item.rating}")
+                        Text(text = "${item.score}")
                     }
                 }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun Prev1 (){
-//    GameRelatedScreen()
 }

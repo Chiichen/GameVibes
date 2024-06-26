@@ -1,12 +1,25 @@
 package cn.chiichen.gamevibes.ui.home.articleSearch
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cn.chiichen.gamevibes.model.entities.Article
+import cn.chiichen.gamevibes.model.request.PageRequest
+import cn.chiichen.gamevibes.model.request.SearchRequest
+import cn.chiichen.gamevibes.model.response.ArticleResponse
+import cn.chiichen.gamevibes.model.response.BaseResponse
+import cn.chiichen.gamevibes.network.RetrofitClient
+import cn.chiichen.gamevibes.network.RetrofitClient.articleApiService
+import cn.chiichen.gamevibes.repository.ArticleRepository
+import cn.chiichen.gamevibes.service.ArticleApiService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.awaitResponse
 
 class ArticleSearchViewModel :ViewModel() {
     //搜索框输入
@@ -29,7 +42,7 @@ class ArticleSearchViewModel :ViewModel() {
     private val _articles = MutableStateFlow<List<Article>>(emptyList())
     val articles: StateFlow<List<Article>> = _articles
 
-    private var currentPage = 0
+    private var currentPage = 1
 
     fun updateSearchText(newText: String) {
         _searchText.value = newText
@@ -38,78 +51,110 @@ class ArticleSearchViewModel :ViewModel() {
     fun addSearchHistory(newText: String){
         _searchHistory.value += newText
     }
-    fun getSearchFinding(){
+    fun getSearchFinding() {
         viewModelScope.launch {
-            // 测试数据 todo delete
-            _searchFindings.value = listOf(
-                "每日商店",
-                "悟空",
-                "gta6",
-                "双人成行",
-                "黑神话悟空豪华版",
-                "pubg",
-                "双人成行双人成行",
-                "无畏契约",
-            )
+            try {
+                val call = RetrofitClient.articleApiService.getSearchFinding(10)
+                call.enqueue(object : Callback<BaseResponse<List<String>>> {
+                    override fun onResponse(call: Call<BaseResponse<List<String>>>, response: Response<BaseResponse<List<String>>>) {
+                        if (response.isSuccessful) {
+                            try {
+                                // 尝试解析响应体
+                                val responseBody = response.body()
+                                if (responseBody != null && responseBody.code == 0) {
+                                    _searchFindings.value = responseBody.data
+                                } else {
+                                    _searchFindings.value = emptyList()
+                                }
+                            } catch (e: Exception) {
+                                Log.e("getSearchFinding", "Parsing error", e)
+                            }
+                        } else {
+                            // 打印原始响应字符串
+                            val errorBody = response.errorBody()?.string()
+                            Log.e("getSearchFinding", "Error response: $errorBody")
+                            _searchFindings.value = emptyList()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<BaseResponse<List<String>>>, t: Throwable) {
+                        _searchFindings.value = emptyList()
+                        Log.e("getSearchFinding", "Request failed", t)
+                    }
+                })
+            } catch (e: Exception) {
+                _searchFindings.value = emptyList()
+                Log.e("getSearchFinding", "Exception caught", e)
+            }
         }
     }
 
     fun getHotTopics() {
         viewModelScope.launch {
-            // 测试数据 todo delete
-            _hotTopics.value = listOf(
-                "黑神话悟空",
-                "文明6",
-                "艾尔登法环",
-                "艾尔登法环黄金树幽影",
-                "中国式家长",
-                "怪物猎人世界",
-                "极限竞速地平线5",
-                "绝地求生",
-                "荒野大镖客救赎2",
-                "我为情狂"
-            )
+            try {
+                val call = articleApiService.getHotTopics(PageRequest(1,10))
+                call.enqueue(object : Callback<BaseResponse<List<String>>> {
+                    override fun onResponse(call: Call<BaseResponse<List<String>>>, response: Response<BaseResponse<List<String>>>) {
+                        if (response.isSuccessful) {
+                            try {
+                                // 尝试解析响应体
+                                val responseBody = response.body()
+                                if (responseBody != null && responseBody.code == 0) {
+                                    _hotTopics.value = responseBody.data
+                                } else {
+                                    _hotTopics.value = emptyList()
+                                }
+                            } catch (e: Exception) {
+                                Log.e("getHotTopics", "Parsing error", e)
+                            }
+                        } else {
+                            // 打印原始响应字符串
+                            val errorBody = response.errorBody()?.string()
+                            Log.e("getHotTopics", "Error response: $errorBody")
+                            _hotTopics.value = emptyList()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<BaseResponse<List<String>>>, t: Throwable) {
+                        _hotTopics.value = emptyList()
+                        Log.e("getHotTopics", "Request failed", t)
+                    }
+                })
+            }catch(e: Exception) {
+                Log.e("getHotTopics","Exception caught",e)
+            }
         }
     }
 
-    fun getArticles(searchText: String, order: Int = 0){
+    fun getArticles(order: Int){
         viewModelScope.launch {
-            currentPage = 0
-            // 测试数据 todo delete
-            _articles.value = listOf(
-                Article(id = 1, title = "title", comments = 100,
-                    postTime = "2024-06-02T14:15:22Z",pv = 10,
-                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    type = "测试类型"),
-                Article(id = 2, title = "title", comments = 100,
-                    postTime = "2024-06-02T14:15:22Z",pv = 10,
-                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    type = "测试类型"),
-                Article(id = 3, title = "title", comments = 100,
-                    postTime = "2024-06-02T14:15:22Z",pv = 10,
-                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    type = "测试类型"),
-            )
+            val sort = if(order == 0) "pv" else "post_time"
+            val call = articleApiService.getArticles(SearchRequest(currentPage,10,_searchText.value,sort,"desc"))
+            call.enqueue(object : Callback<BaseResponse<ArticleResponse>> {
+                override fun onResponse(call: Call<BaseResponse<ArticleResponse>>, response: Response<BaseResponse<ArticleResponse>>) {
+                    if (response.isSuccessful) {
+                        val articleResponse = response.body()
+                        if (articleResponse != null) {
+                            _articles.value += articleResponse.data.records
+                            currentPage += 1
+                        } else {
+                            Log.e("getArticles", "ArticleResponse is null")
+                        }
+                    } else {
+                        Log.e("getArticles", "Response is not successful: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<BaseResponse<ArticleResponse>>, t: Throwable) {
+                    Log.e("getArticles", "API call failed", t)
+                }
+            })
         }
     }
 
-    fun getMoreArticles(){
+    fun clean() {
         viewModelScope.launch {
-            // 测试数据 todo delete
-            _articles.value += listOf(
-                Article(id = 1, title = "title", comments = 100,
-                    postTime = "2024-06-02T14:15:22Z",pv = 10,
-                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    type = "测试类型"),
-                Article(id = 2, title = "title", comments = 100,
-                    postTime = "2024-06-02T14:15:22Z",pv = 10,
-                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    type = "测试类型"),
-                Article(id = 3, title = "title", comments = 100,
-                    postTime = "2024-06-02T14:15:22Z",pv = 10,
-                    image = "https://img0.baidu.com/it/u=350592823,3182430235&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-                    type = "测试类型"),
-            )
+            _articles.value = emptyList()
         }
     }
 }

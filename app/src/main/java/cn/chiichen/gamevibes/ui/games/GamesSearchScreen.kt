@@ -40,12 +40,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cn.chiichen.gamevibes.R
+import cn.chiichen.gamevibes.model.entities.Game
 import coil.compose.rememberAsyncImagePainter
 
 
 @Composable
 fun GamesSearchScreen(navController: NavController,viewModel: GamesViewModel){
-    val relatedGames by viewModel.relatedGame.collectAsState()
+    val relatedGames by viewModel.relatedGames.collectAsState()
     var searchText by remember { mutableStateOf(viewModel.searchText.value) }
     val listState = LazyListState()
 
@@ -98,7 +99,7 @@ fun GamesSearchScreen(navController: NavController,viewModel: GamesViewModel){
                         searchText = it
                         viewModel.updateSearchText(it)
                     },
-                    modifier = Modifier.height(30.dp)
+                    modifier = Modifier.height(50.dp)
                 )
                 IconButton(
                     onClick = {
@@ -128,7 +129,7 @@ fun GamesSearchScreen(navController: NavController,viewModel: GamesViewModel){
 
         LaunchedEffect(shouldLoadMore.value) {
             if (shouldLoadMore.value) {
-                viewModel.getRelatedGames()
+                viewModel.getMoreRelatedGames()
             }
         }
     }
@@ -150,13 +151,13 @@ private fun RowItem(navController: NavController,game: Game){
         Image(painter = rememberAsyncImagePainter(game.image), contentDescription = "")
         Spacer(modifier = Modifier.width(10.dp))
         Column {
-            Text(text = game.title)
+            Text(text = game.name)
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(imageVector = Icons.Default.Star, contentDescription = "")
-                Text(text = "${game.rating}")
+                Text(text = "${game.score}")
             }
         }
     }

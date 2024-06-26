@@ -110,7 +110,7 @@ private fun RowItem(article: Article,navController: NavController) {
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = timeConvertor(article.postTime) + " • " + article.type,
+                    text = timeConvertor(article.post_time) + " • " + article.type,
                     fontSize = 12.sp,
                     color = Color.Gray
                 )

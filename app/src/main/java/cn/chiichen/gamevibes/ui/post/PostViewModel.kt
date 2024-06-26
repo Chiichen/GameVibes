@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cn.chiichen.gamevibes.ui.games.Game
+import cn.chiichen.gamevibes.model.entities.Game
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
