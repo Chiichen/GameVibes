@@ -9,13 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import cn.chiichen.gamevibes.R
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavHostController, context: Context) {
+fun SplashScreen(navController: NavHostController) {
+    val context: Context = LocalContext.current
     // 显示启动页内容，可以是一个简单的Logo或者动画
     Box(
         modifier = Modifier.fillMaxSize(),

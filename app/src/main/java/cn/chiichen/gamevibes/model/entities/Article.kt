@@ -2,11 +2,11 @@ package cn.chiichen.gamevibes.model.entities
 
 
 data class Article(
-    val id: Int,
+    val id: Long,
     val title: String,
-    val pv: Int,
-    val postTime: String,
+    val type: String,
+    val image: String,
     val comments: Int,
-    val imageRes: String,
-    val type: String
+    val pv: Int,
+    val post_time: String,
 )
