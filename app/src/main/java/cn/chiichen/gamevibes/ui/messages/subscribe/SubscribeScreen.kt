@@ -20,16 +20,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun SubscribeScreen(viewModel: SubscribeViewModel = SubscribeViewModel()) {
+fun SubscribeScreen(
+    navController: NavController,
+    viewModel: SubscribeViewModel = SubscribeViewModel()
+) {
     val subscribes by viewModel.subscribes.collectAsState()
     LazyColumn {
         items(subscribes) { subscribe ->
             SubscribeMessageItem(
                 subscribe,
-                onMessageClick = {//TODO
+                onMessageClick = {
+                    navController.navigate("article/${subscribe.id}")
                 })
         }
     }

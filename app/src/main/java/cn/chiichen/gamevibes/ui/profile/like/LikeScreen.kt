@@ -17,10 +17,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import cn.chiichen.gamevibes.R
 
 @Composable
-fun LikeScreen(viewModel: LikeViewModel = viewModel()) {
+fun LikeScreen(navController: NavController, viewModel: LikeViewModel = viewModel()) {
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -20,16 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun LikeScreen(viewModel: LikeViewModel = LikeViewModel()) {
+fun LikeScreen(navController: NavController, viewModel: LikeViewModel = LikeViewModel()) {
     val likes by viewModel.likes.collectAsState()
     LazyColumn {
         items(likes) { like ->
             LikeMessageItem(
                 like,
-                onMessageClick = {//TODO
+                onMessageClick = {
+                    navController.navigate("article/${like.id}")
                 })
         }
     }

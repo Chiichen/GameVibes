@@ -13,13 +13,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import cn.chiichen.gamevibes.ui.messages.comment.CommentScreen
 import cn.chiichen.gamevibes.ui.messages.save.SaveScreen
 import cn.chiichen.gamevibes.ui.messages.subscribe.SubscribeScreen
 import cn.chiichen.gamevibes.ui.profile.like.LikeScreen
 
 @Composable
-fun MessagesScreen() {
+fun MessagesScreen(navController: NavController) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     Column {
         // Tabs
@@ -38,10 +40,10 @@ fun MessagesScreen() {
             }
         }
         when (selectedTabIndex) {
-            0 -> CommentScreen()
-            1 -> LikeScreen()
-            2 -> SaveScreen()
-            3 -> SubscribeScreen()
+            0 -> CommentScreen(navController)
+            1 -> LikeScreen(navController)
+            2 -> SaveScreen(navController)
+            3 -> SubscribeScreen(navController)
         }
     }
 
@@ -50,5 +52,6 @@ fun MessagesScreen() {
 @Preview
 @Composable
 fun MessagesScreenPreview() {
-    MessagesScreen()
+    val navController = rememberNavController()
+    MessagesScreen(navController)
 }

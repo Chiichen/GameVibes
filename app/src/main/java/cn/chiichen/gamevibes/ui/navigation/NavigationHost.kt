@@ -35,26 +35,32 @@ fun NavigationHost(
     val articleSearchViewModel: ArticleSearchViewModel = viewModel()
     val gamesViewModel: GamesViewModel = viewModel()
     NavHost(navController, startDestination = "splash", modifier = modifier) {
-        composable("splash"){ SplashScreen(navController)}
-        composable("guide"){GuideScreen(navController)}
+        composable("splash") { SplashScreen(navController) }
+        composable("guide") { GuideScreen(navController) }
         composable("home") { HomeScreen(navController) }
         composable("article/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
-            if(id != null) ArticleDetailScreen(navController, id)
+            if (id != null) ArticleDetailScreen(navController, id)
         }
         composable("articleSearch") { ArticleSearchScreen(navController, articleSearchViewModel) }
-        composable("articleSearchResult") {ArticleSearchResultScreen(navController, articleSearchViewModel)}
-        composable("games") { GamesScreen(navController,gamesViewModel) }
-        composable("gamesSearch") { GamesSearchScreen(navController,gamesViewModel) }
+        composable("articleSearchResult") {
+            ArticleSearchResultScreen(
+                navController,
+                articleSearchViewModel
+            )
+        }
+        composable("games") { GamesScreen(navController, gamesViewModel) }
+        composable("gamesSearch") { GamesSearchScreen(navController, gamesViewModel) }
         composable("gameDetail/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
-            if(id != null) GameDetailScreen(navController,id) }
-        composable("gameReview/{name}"){backStackEntry ->
+            if (id != null) GameDetailScreen(navController, id)
+        }
+        composable("gameReview/{name}") { backStackEntry ->
             val name = backStackEntry.arguments?.getString("name")
-            GameReviewScreen(navController,name)
+            GameReviewScreen(navController, name)
         }
         composable("post") { PostScreen(navController) }
-        composable("messages") { MessagesScreen() }
+        composable("messages") { MessagesScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
         composable("setting") { SettingScreen(navController) }
         composable("login") { LoginWebview(navController) }

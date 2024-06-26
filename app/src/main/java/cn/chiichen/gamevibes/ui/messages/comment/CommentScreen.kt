@@ -20,14 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun CommentScreen(viewModel: CommentViewModel = CommentViewModel()) {
+fun CommentScreen(navController: NavController, viewModel: CommentViewModel = CommentViewModel()) {
     val comments by viewModel.comments.collectAsState()
     LazyColumn {
         items(comments) { comment ->
-            CommentMessageItem(comment, onMessageClick = {//TODO
+            CommentMessageItem(comment, onMessageClick = {
+                navController.navigate("article/${comment.id}")
             })
         }
     }

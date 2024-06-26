@@ -182,7 +182,7 @@ fun LoggedInProfileScreen(navController: NavController, viewModel: ProfileViewMo
             0 -> PostScreen()
             1 -> ReviewScreen()
             2 -> FavoriteScreen()
-            3 -> LikeScreen()
+            3 -> LikeScreen(navController)
         }
     }
 }

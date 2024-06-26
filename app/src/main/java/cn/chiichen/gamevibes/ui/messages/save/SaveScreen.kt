@@ -20,17 +20,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 
 
 @Composable
-fun SaveScreen(viewModel: SaveViewModel = SaveViewModel()) {
+fun SaveScreen(navController: NavController, viewModel: SaveViewModel = SaveViewModel()) {
     val saves by viewModel.saves.collectAsState()
     LazyColumn {
         items(saves) { save ->
             SaveMessageItem(
                 save,
-                onMessageClick = {//TODO
+                onMessageClick = {
+                    navController.navigate("article/${save.id}")
                 })
         }
     }
