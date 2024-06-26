@@ -47,8 +47,21 @@ class UserRepository {
                     body.data.userId,
                 )
             } else {
-                return null
+                return UserProfile(
+                    body.data.avatar,
+                    body.data.createTime,
+                    body.data.fansCount,
+                    body.data.focusCount,
+                    body.data.id,
+                    body.data.ipAddr,
+                    body.data.intro,
+                    body.data.likeCollectCount,
+                    body.data.nickName,
+                    body.data.userId,
+                )
+//                return null
             }
+
         }
         return null
     }
