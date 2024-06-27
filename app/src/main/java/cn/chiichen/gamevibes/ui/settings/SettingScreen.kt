@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import cn.chiichen.gamevibes.R
+import com.tencent.mmkv.MMKV
 
 @Composable
 fun SettingScreen(navController: NavController, viewModel: SettingViewModel = viewModel()) {
@@ -116,7 +117,11 @@ fun SettingScreen(navController: NavController, viewModel: SettingViewModel = vi
             SettingOption(
                 icon = R.drawable.ic_logout, // 替换为你的退出图标资源
                 title = "退出账号",
-                onClick = { /*TODO: Handle logout click*/ }
+                onClick = {
+                    val mmkv = MMKV.defaultMMKV();
+                    mmkv.remove("login_token");
+                    navController.popBackStack();
+                }
             )
         }
     }

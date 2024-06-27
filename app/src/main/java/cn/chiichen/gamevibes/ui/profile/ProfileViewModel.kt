@@ -23,7 +23,7 @@ class ProfileViewModel : ViewModel() {
         checkLoginStatus()
     }
 
-    private fun checkLoginStatus() {
+    fun checkLoginStatus() {
         val mmkv = MMKV.defaultMMKV()
         val token = mmkv.decodeString("login_token")
         isLoggedIn.value = false

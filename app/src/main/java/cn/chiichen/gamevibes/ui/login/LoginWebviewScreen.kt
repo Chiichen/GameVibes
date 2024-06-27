@@ -17,49 +17,12 @@ import androidx.navigation.NavController
 import cn.chiichen.gamevibes.config.GameVibesConfig
 import cn.chiichen.gamevibes.ui.common.webview.CustomWebView
 import com.tencent.mmkv.MMKV
-import org.casdoor.Casdoor
-import org.casdoor.CasdoorConfig
 
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun LoginWebview(navController: NavController) {
-    val casdoorConfig = CasdoorConfig(
-        endpoint = GameVibesConfig.casdoor_endpoint,
-        clientID = GameVibesConfig.casdoor_clientID,
-        organizationName = GameVibesConfig.casdoor_organizationName,
-        redirectUri = GameVibesConfig.casdoor_redirectUri,
-        appName = GameVibesConfig.casdoor_appName,
-    )
-    Log.i("Login", String.format("LoginWebview: endpoint %s", casdoorConfig.endpoint))
-    val casdoor = Casdoor(casdoorConfig)
-    val loginUrl = casdoor.getSignInUrl(scope = "profile")
-    Log.i("Login", String.format("LoginWebview: loginUrl %s", loginUrl))
-//    AndroidView(
-//        factory = { context ->
-//            WebView(context).apply {
-//                webViewClient = object : WebViewClient() {
-//                    override fun shouldOverrideUrlLoading(
-//                        view: WebView?,
-//                        request: WebResourceRequest?
-//                    ): Boolean {
-//                        val url = request?.url.toString()
-//                        if (url.startsWith(GameVibesConfig.casdoor_redirectUri)) {
-//                            // 处理重定向URL，提取登录信息
-//                            val code = url.substringAfter("code=")
-//                            // 使用code获取token或其他信息
-//                            return true
-//                        }
-//                        return super.shouldOverrideUrlLoading(view, request)
-//                    }
-//                }
-//                settings.javaScriptEnabled = true
-//                loadUrl(loginUrl)
-//            }
-//        },
-//        modifier = Modifier.fillMaxSize()
-//    )
-
+fun LoginWebview(navController: NavController, viewModel: LoginViewModel = LoginViewModel()) {
+    val loginUrl = viewModel.casdoor.getSignInUrl();
     var rememberWebViewProgress: Int by remember { mutableIntStateOf(-1) }
     Box {
         CustomWebView(
@@ -99,12 +62,19 @@ fun LoginWebview(navController: NavController) {
                         .startsWith(GameVibesConfig.casdoor_endpoint + "/login/oauth/" + GameVibesConfig.casdoor_redirectUri)
                 ) {
                     val code: String? = uri.getQueryParameter("code")
-                    if (!TextUtils.isEmpty(code)) {
-                        val mmkv = MMKV.defaultMMKV()
-                        mmkv.putString("login_token", code)
-                        navController.popBackStack();
-                        return@CustomWebView true
+                    code?.let { s ->
+                        if (!TextUtils.isEmpty(code)) {
+                            viewModel.getAccessToken(s);
+                            viewModel.accessToken.value?.let { token ->
+                                val mmkv = MMKV.defaultMMKV()
+                                mmkv.putString("login_token", token)
+                                navController.popBackStack();
+                                return@CustomWebView true;
+                            }
+                            return@CustomWebView false;
+                        }
                     }
+
                 }
                 return@CustomWebView false
             }

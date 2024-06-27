@@ -25,6 +25,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,7 +49,13 @@ import cn.chiichen.gamevibes.ui.profile.review.ReviewScreen
 
 @Composable
 fun ProfileScreen(navController: NavController, viewModel: ProfileViewModel = viewModel()) {
-    if (viewModel.isLoggedIn.value) {
+    val isLoggedIn = remember {
+        viewModel.isLoggedIn
+    }
+    LaunchedEffect(isLoggedIn) {
+        viewModel.checkLoginStatus()
+    }
+    if (isLoggedIn.value) {
         LoggedInProfileScreen(navController, viewModel)
     } else {
         LoggedOutProfileScreen(navController)
